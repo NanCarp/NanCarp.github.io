@@ -1,0 +1,767 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JFinal 微信," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="自定义菜单接口1234567891011121314/** * 查询菜单 */MenuApi.getMenu();/** * 创建菜单 */MenuApi.createMenu(String jsonStr);/** * 自定义菜单删除接口 */MenuApi.deleteMenu(); WeinxinApiController.javacreateMenu(String jsonStr) 接受">
+<meta name="keywords" content="JFinal 微信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JFinal Weixin 学习笔记（8）-- 微信自定义菜单">
+<meta property="og:url" content="http://yoursite.com/2017/05/23/JFinal Weixin 学习笔记（8）-- 微信自定义菜单/index.html">
+<meta property="og:site_name" content="李子园">
+<meta property="og:description" content="自定义菜单接口1234567891011121314/** * 查询菜单 */MenuApi.getMenu();/** * 创建菜单 */MenuApi.createMenu(String jsonStr);/** * 自定义菜单删除接口 */MenuApi.deleteMenu(); WeinxinApiController.javacreateMenu(String jsonStr) 接受">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-9d135134a26c0b34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-989b1cdda1ae9bf0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-9db99bf82a64d269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-1f2158641ce18284.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-70dcadb1095aebd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-72c4afa586b48cc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-23T01:47:26.308Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JFinal Weixin 学习笔记（8）-- 微信自定义菜单">
+<meta name="twitter:description" content="自定义菜单接口1234567891011121314/** * 查询菜单 */MenuApi.getMenu();/** * 创建菜单 */MenuApi.createMenu(String jsonStr);/** * 自定义菜单删除接口 */MenuApi.deleteMenu(); WeinxinApiController.javacreateMenu(String jsonStr) 接受">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/5343805-9d135134a26c0b34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/23/JFinal Weixin 学习笔记（8）-- 微信自定义菜单/"/>
+
+
+
+
+
+  <title>JFinal Weixin 学习笔记（8）-- 微信自定义菜单 | 李子园</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李子园</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录学习、生活、感悟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/23/JFinal Weixin 学习笔记（8）-- 微信自定义菜单/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JFinal Weixin 学习笔记（8）-- 微信自定义菜单</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T11:05:43+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h4 id="自定义菜单接口"><a href="#自定义菜单接口" class="headerlink" title="自定义菜单接口"></a>自定义菜单接口</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 查询菜单</div><div class="line"> */</div><div class="line">MenuApi.getMenu();</div><div class="line"></div><div class="line">/**</div><div class="line"> * 创建菜单</div><div class="line"> */</div><div class="line">MenuApi.createMenu(String jsonStr);</div><div class="line"></div><div class="line">/**</div><div class="line"> * 自定义菜单删除接口</div><div class="line"> */</div><div class="line">MenuApi.deleteMenu();</div></pre></td></tr></table></figure>
+<h4 id="WeinxinApiController-java"><a href="#WeinxinApiController-java" class="headerlink" title="WeinxinApiController.java"></a>WeinxinApiController.java</h4><p><code>createMenu(String jsonStr)</code> 接受 json 格式的字符串，我们根据微信技术文档拼接自定义菜单字符串：</p>
+<pre><code>/**
+ * 创建菜单
+ */
+public void createMenu() {
+    String path = Constants.HOST;
+    String jsonstr = &quot;{&quot; +
+            &quot;    \&quot;button\&quot;: [&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单1\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单11\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单12\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单13\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单14\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单15\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        },&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单2\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;测　　试\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api/index\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;click\&quot;,\&quot;type\&quot;: \&quot;click\&quot;,\&quot;key\&quot;: \&quot;22\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单23\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;百度\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;http://www.baidu.com\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单25\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        },&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单3\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot;+
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单31\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单32\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单33\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单34\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单35\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        }&quot; +
+            &quot;    ]&quot; +
+            &quot;}&quot;;
+    ApiResult apiResult = MenuApi.createMenu(jsonstr);
+    renderText(apiResult.getJson());
+}
+</code></pre><p>自定义菜单接口可实现多种类型按钮，详见：<a href="https://mp.weixin.qq.com/wiki" target="_blank" rel="external">微信公众平台技术文档</a>。<br>这里使用了两种：<br>1、<code>click</code>：点击推事件用户点击 click 类型按钮后，微信服务器会通过消息接口推送消息类型为 event 的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的 key 值，开发者可以通过自定义的 key 值与用户进行交互；<br>2、<code>view</code>：跳转 URL 用户点击 view 类型按钮后，微信客户端将会打开开发者在按钮中填写的网页 URL，可与网页授权获取用户基本信息接口结合，获得用户基本信息。</p>
+<p><code>getMenu()</code> 方法，查询自定义菜单：</p>
+<pre><code>/**
+ * 查询菜单
+ */
+public void getMenu() {
+    ApiResult apiResult = MenuApi.getMenu();
+    renderText(apiResult.getJson());
+}
+</code></pre><h4 id="WeixinMsgController-java"><a href="#WeixinMsgController-java" class="headerlink" title="WeixinMsgController.java"></a>WeixinMsgController.java</h4><p><code>processInMenuEvent(InMenuEvent inMenuEvent)</code>  方法接受菜单中 <code>click</code> 类型按钮的点击事件</p>
+<pre><code>// 自定义菜单事件
+@Override
+protected void processInMenuEvent(InMenuEvent inMenuEvent) {
+    OutTextMsg outMsg = new OutTextMsg(inMenuEvent);
+    outMsg.setContent(&quot;processInMenuEvent() 方法测试成功&quot;);
+    render(outMsg);
+}
+</code></pre><h4 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h4><pre><code>&lt;h3&gt;自定义菜单&lt;/h3&gt;
+点击&lt;a href=&apos;/api/createMenu&apos;&gt;【创建自定义菜单】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/getMenu&apos;&gt;【获取自定义菜单】&lt;/a&gt;&lt;br&gt;
+</code></pre><h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>点击创建菜单，微信客户端不会立马刷新。想立马看到效果，可以取消关注再关注。<br>微信菜单：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-9d135134a26c0b34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="一级菜单"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-989b1cdda1ae9bf0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="二级菜单"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-9db99bf82a64d269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="三级菜单"></p>
+<p>点击 <code>click22</code><br><img src="http://upload-images.jianshu.io/upload_images/5343805-1f2158641ce18284.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>新增了“测试”按钮，可以直接跳转主页面：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-70dcadb1095aebd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="测试页面"></p>
+<p>点击“获取自定义菜单”<br>得到 json 格式的菜单数据：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-72c4afa586b48cc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="菜单数据"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/2d740d059fa0" target="_blank" rel="external">JFinal Weixin 学习笔记（9）– 微信账号二维码</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/zyw_java/article/details/61415114" target="_blank" rel="external">微信公众号开发之自定义菜单</a><br><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95%E6%8E%A5%E5%8F%A3" target="_blank" rel="external">jfinal-weixin-wiki 自定义菜单接口</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JFinal-微信/" rel="tag"># JFinal 微信</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/JFinal Weixin 学习笔记（7）-- 微信用户管理/" rel="next" title="JFinal Weixin 学习笔记（7）-- 微信用户管理">
+                <i class="fa fa-chevron-left"></i> JFinal Weixin 学习笔记（7）-- 微信用户管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/24/JFinal Weixin 学习笔记（9）-- 微信账号二维码/" rel="prev" title="JFinal Weixin 学习笔记（9）-- 微信账号二维码">
+                JFinal Weixin 学习笔记（9）-- 微信账号二维码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="NanCarp" />
+          <p class="site-author-name" itemprop="name">NanCarp</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义菜单接口"><span class="nav-number">1.</span> <span class="nav-text">自定义菜单接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WeinxinApiController-java"><span class="nav-number">2.</span> <span class="nav-text">WeinxinApiController.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WeixinMsgController-java"><span class="nav-number">3.</span> <span class="nav-text">WeixinMsgController.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#index-html"><span class="nav-number">4.</span> <span class="nav-text">index.html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行"><span class="nav-number">5.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NanCarp</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

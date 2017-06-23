@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="JFinal 微信," />
 
 
 
@@ -93,16 +93,21 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="项目结构   WeixinApiControllerWeixinApiController 继承 ApiController ，所有使用 Api 的 controller 都需要继承此类。目前没有使用 jfinal-weixin 接口，只是简单地跳转到主页。 package com.nancarp.controller;  import com.jfinal.weixin.sdk.api.Api">
+<meta name="keywords" content="JFinal 微信">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2017/04/17/hello-world/index.html">
+<meta property="og:title" content="JFinal Weixin 学习笔记（5）-- 微信页面跳转">
+<meta property="og:url" content="http://yoursite.com/2017/05/18/JFinal Weixin 学习笔记（5）-- 微信页面跳转/index.html">
 <meta property="og:site_name" content="李子园">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
-<meta property="og:updated_time" content="2017-06-23T01:26:51.556Z">
+<meta property="og:description" content="项目结构   WeixinApiControllerWeixinApiController 继承 ApiController ，所有使用 Api 的 controller 都需要继承此类。目前没有使用 jfinal-weixin 接口，只是简单地跳转到主页。 package com.nancarp.controller;  import com.jfinal.weixin.sdk.api.Api">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-568813dea75afbc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-36366efdc5f74778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5343805-c579c9fbffedc9e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-23T01:44:24.821Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="JFinal Weixin 学习笔记（5）-- 微信页面跳转">
+<meta name="twitter:description" content="项目结构   WeixinApiControllerWeixinApiController 继承 ApiController ，所有使用 Api 的 controller 都需要继承此类。目前没有使用 jfinal-weixin 接口，只是简单地跳转到主页。 package com.nancarp.controller;  import com.jfinal.weixin.sdk.api.Api">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/5343805-568813dea75afbc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -130,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/17/hello-world/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/18/JFinal Weixin 学习笔记（5）-- 微信页面跳转/"/>
 
 
 
 
 
-  <title>Hello World | 李子园</title>
+  <title>JFinal Weixin 学习笔记（5）-- 微信页面跳转 | 李子园</title>
   
 
 
@@ -255,7 +260,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/17/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/18/JFinal Weixin 学习笔记（5）-- 微信页面跳转/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="NanCarp">
@@ -272,7 +277,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">JFinal Weixin 学习笔记（5）-- 微信页面跳转</h1>
         
 
         <div class="post-meta">
@@ -284,8 +289,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-17T09:23:43+08:00">
-                2017-04-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T16:42:43+08:00">
+                2017-05-18
               </time>
             
 
@@ -319,15 +324,85 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <hr>
+<h4 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h4><p><img src="http://upload-images.jianshu.io/upload_images/5343805-568813dea75afbc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="项目结构">  </p>
+<h4 id="WeixinApiController"><a href="#WeixinApiController" class="headerlink" title="WeixinApiController"></a>WeixinApiController</h4><p><code>WeixinApiController</code> 继承 <code>ApiController</code> ，所有使用 Api 的 controller 都需要继承此类。<br>目前没有使用 jfinal-weixin 接口，只是简单地跳转到主页。</p>
+<pre><code>package com.nancarp.controller;
+
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.jfinal.ApiController;
+import com.nancarp.utils.WeixinUtil;
+
+public class WeixinApiController extends ApiController {
+
+    /**
+     * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
+     * ApiConfig 属性值
+     */
+    @Override
+    public ApiConfig getApiConfig() {
+        return WeixinUtil.getApiConfig();
+    }
+
+    // 主页
+    public void index(){
+        render(&quot;index.html&quot;);
+    }
+
+}
+</code></pre><h4 id="Constants"><a href="#Constants" class="headerlink" title="Constants"></a>Constants</h4><p><code>Constants</code> 类保存项目中用到的常量</p>
+<pre><code>package com.nancarp.utils;
+
+import com.jfinal.kit.PropKit;
+
+public class Constants {
+    // 获取域名
+    public static String host = PropKit.get(&quot;host&quot;);
+
+}
+</code></pre><h4 id="WeixinConfig-增加路由"><a href="#WeixinConfig-增加路由" class="headerlink" title="WeixinConfig 增加路由"></a>WeixinConfig 增加路由</h4><pre><code>@Override
+public void configRoute(Routes me) {
+    // HelloWorld 路由
+    me.add(&quot;/hello&quot;,HelloWorldController.class);
+    // 接收用户消息和发送消息
+    me.add(&quot;/msg&quot;, WeixinMsgController.class);
+    // 操作微信接口
+    me.add(&quot;/api&quot;, WeixinApiController.class,&quot;/api&quot;);
+}
+</code></pre><h4 id="修改-WeixinMsgController"><a href="#修改-WeixinMsgController" class="headerlink" title="修改 WeixinMsgController"></a>修改 WeixinMsgController</h4><p><code>url</code>  要以 <code>http://</code> 或 <code>https://</code> 开头，否则微信返回的信息只是单纯的文本。</p>
+<pre><code>@Override
+protected void processInTextMsg(InTextMsg inTextMsg) {
+    // 文本内容
+    String msgContent = inTextMsg.getContent().trim();
+    // 回复主页链接
+    if (&quot;1&quot;.equals(msgContent) || &quot;主页&quot;.equals(msgContent)){
+        OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+        String url = Constants.host + &quot;/api/index&quot;;
+        String urlStr = &quot;&lt;a href=\&quot;&quot;+url+&quot;\&quot;&gt;点击跳转主页&lt;/a&gt;&quot;;
+        outMsg.setContent(urlStr);
+        render(outMsg);
+    } else {
+        // 其它文本消息直接返回原值
+        OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+        outMsg.setContent(&quot;\t文本消息已成功接收，内容为： &quot; + inTextMsg.getContent());
+        render(outMsg);
+    }
+}
+</code></pre><h4 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h4><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;title&gt;主页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;欢迎来到主页&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h4 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h4><p>不出意外，将会得到如下结果：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-36366efdc5f74778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="回复消息"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-c579c9fbffedc9e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="主页"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/cfb13d02465f" target="_blank" rel="external">JFinal Weixin 学习笔记（6）– 获取微信接口调用凭据</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://www.jianshu.com/p/6e8caa616577" target="_blank" rel="external">微信公众号开发之如何实现消息交互</a><br><a href="http://www.jfinal.com/project/2" target="_blank" rel="external">JFinal Weixin 极速开发 SDK</a></p>
 
       
     </div>
@@ -355,6 +430,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/JFinal-微信/" rel="tag"># JFinal 微信</a>
+          
+        </div>
+      
 
       
       
@@ -364,14 +445,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/05/18/JFinal Weixin 学习笔记（4）-- 实现微信信息交互/" rel="next" title="JFinal Weixin 学习笔记（4）-- 实现微信信息交互">
+                <i class="fa fa-chevron-left"></i> JFinal Weixin 学习笔记（4）-- 实现微信信息交互
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/05/17/JFinal Weixin 学习笔记（1）-- 目录/" rel="prev" title="JFinal Weixin 学习笔记（1）-- 目录">
-                JFinal Weixin 学习笔记（1）-- 目录 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/20/JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据/" rel="prev" title="JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据">
+                JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -492,7 +577,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#项目结构"><span class="nav-number">1.</span> <span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WeixinApiController"><span class="nav-number">2.</span> <span class="nav-text">WeixinApiController</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Constants"><span class="nav-number">3.</span> <span class="nav-text">Constants</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WeixinConfig-增加路由"><span class="nav-number">4.</span> <span class="nav-text">WeixinConfig 增加路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改-WeixinMsgController"><span class="nav-number">5.</span> <span class="nav-text">修改 WeixinMsgController</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#index-html"><span class="nav-number">6.</span> <span class="nav-text">index.html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启动项目"><span class="nav-number">7.</span> <span class="nav-text">启动项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">8.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
             
 
           </div>

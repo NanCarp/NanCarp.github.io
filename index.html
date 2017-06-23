@@ -253,6 +253,1357 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/24/JFinal Weixin 学习笔记（9）-- 微信账号二维码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/24/JFinal Weixin 学习笔记（9）-- 微信账号二维码/" itemprop="url">JFinal Weixin 学习笔记（9）-- 微信账号二维码</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-24T17:02:43+08:00">
+                2017-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="接口介绍"><a href="#接口介绍" class="headerlink" title="接口介绍"></a>接口介绍</h2><hr>
+<h4 id="生成带参数的二维码-QrcodeApi"><a href="#生成带参数的二维码-QrcodeApi" class="headerlink" title="生成带参数的二维码 QrcodeApi"></a>生成带参数的二维码 <code>QrcodeApi</code></h4><p>为了满足用户渠道推广分析和用户帐号绑定等场景的需要，公众平台提供了生成带参数二维码的接口。使用该接口可以获得多个带不同场景值的二维码，用户扫描后，公众号可以接收到事件推送。<br>1、临时二维码，是有过期时间的，最长可以设置为在二维码生成后的30天（即2592000秒）后过期，但能够生成较多数量。临时二维码主要用于帐号绑定等不要求二维码永久保存的业务场景  。<br>2、永久二维码，是无过期时间的，但数量较少（目前为最多10万个）。永久二维码主要用于适用于帐号绑定、用户来源统计等场景。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 创建临时二维码</div><div class="line"> * @param expireSeconds 该二维码有效时间，以秒为单位。 最大不超过604800（即7天）。</div><div class="line"> * @param sceneId 场景值ID，临时二维码时为32位非0整型</div><div class="line"> * @return ApiResult 二维码信息</div><div class="line"> */</div><div class="line">public static ApiResult createTemporary(int expireSeconds, int sceneId);</div><div class="line"></div><div class="line">/**</div><div class="line"> * 创建永久二维码</div><div class="line"> * @param sceneId 场景值ID，永久二维码时最大值为100000（目前参数只支持1--100000）</div><div class="line"> * @return ApiResult 二维码信息</div><div class="line"> */</div><div class="line">public static ApiResult createPermanent(int sceneId);</div><div class="line"></div><div class="line">/**</div><div class="line"> * 创建永久二维码</div><div class="line"> * @param sceneStr 场景值ID（字符串形式的ID），字符串类型，长度限制为1到64，仅永久二维码支持此字段</div><div class="line"> * @return ApiResult 二维码信息</div><div class="line"> */</div><div class="line">public static ApiResult createPermanent(String sceneStr);</div><div class="line"></div><div class="line">/**</div><div class="line"> * 通过ticket换取二维码地址，拼接二维码连接，可直接通过&lt;img&gt;显示</div><div class="line"> * @param ticket 换取二维码参数</div><div class="line"> * @return String url</div><div class="line"> */</div><div class="line">public static String getShowQrcodeUrl(String ticket);</div></pre></td></tr></table></figure>
+<h4 id="长链接转短链接接口-ShorturlApi"><a href="#长链接转短链接接口-ShorturlApi" class="headerlink" title="长链接转短链接接口 ShorturlApi"></a>长链接转短链接接口 <code>ShorturlApi</code></h4><p>将一条长链接转成短链接。<br>主要使用场景： 开发者用于生成二维码的原链接（商品、支付二维码等）太长导致扫码速度和成功率下降，将原长链接通过此接口转成短链接再生成二维码将大大提升扫码速度和成功率。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 长链接转短链接接口</div><div class="line"> * @param longUrl 需要转换的长链接，支持http://、https://、weixin://wxpay 格式的url</div><div class="line"> * @return ApiResult 短连接信息</div><div class="line"> */</div><div class="line">public static ApiResult getShortUrl(String longUrl);</div></pre></td></tr></table></figure>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><hr>
+<h4 id="WeixinApiController-java"><a href="#WeixinApiController-java" class="headerlink" title="WeixinApiController.java"></a>WeixinApiController.java</h4><pre><code>// 生成带参数的二维码
+// 创建临时二维码
+public void createTemporary(){
+    ApiResult apiResult = null;
+    // 过期时间
+    int expireSeconds = 604800;
+    // 场景值
+    int sceneId = 111;
+    // 生成临时二维码
+    apiResult = QrcodeApi.createTemporary(expireSeconds, sceneId);
+    // 获取 ticket,拼接 url 
+    JSONObject jsonObjec = JSONObject.parseObject(apiResult.getJson());
+    String ticket = jsonObjec.getString(&quot;ticket&quot;);
+    String outMessage = &quot;apiResult: &quot; + apiResult.getJson() +&quot;\n&quot;
+            + &quot;QrcodeUrl: &quot; + QrcodeApi.getShowQrcodeUrl(ticket);
+    renderText(outMessage);
+}
+
+// 长链接转短链接接口 ShorturlApi
+public void getShortUrl(){
+    ApiResult apiResult = null;
+    String longUrl = &quot;https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQHT7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyemlhcVFPa0JmUWoxM01GRk5wMW0AAgRw7x9ZAwSAOgkA&quot;;
+    apiResult = ShorturlApi.getShortUrl(longUrl);
+    JSONObject jsonObjec = JSONObject.parseObject(apiResult.getJson());
+    String shorUrl = jsonObjec.getString(&quot;short_url&quot;);
+    String outMessage = &quot;apiResult: &quot; + apiResult.getJson() +&quot;\n&quot;
+            + &quot;longUrl: &quot; + longUrl + &quot;\n\n&quot;
+            + &quot;shorUrl: &quot; + shorUrl;
+    renderText(outMessage);
+}
+</code></pre><h4 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h4><pre><code>&lt;h3&gt;微信账号二维码&lt;/h3&gt;
+点击&lt;a href=&apos;/api/createTemporary&apos;&gt;【创建临时二维码】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/getShortUrl&apos;&gt;【长链接转短链接】&lt;/a&gt;&lt;br&gt;
+</code></pre><h2 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h2><hr>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-9f40e18fe79d47a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="测试页面">  </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-9d519c902e908093.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="创建临时二维码"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-7a07dbca0607d4d1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="长链接转短链接">  </p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/zyw_java/article/details/54024672" target="_blank" rel="external">微信开发之推广支持</a><br><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/%E5%B8%90%E5%8F%B7%E7%AE%A1%E7%90%86#长链接转短链接接口shorturlapi" target="_blank" rel="external">jfinal-weixin-wiki 帐号管理</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/23/JFinal Weixin 学习笔记（8）-- 微信自定义菜单/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/23/JFinal Weixin 学习笔记（8）-- 微信自定义菜单/" itemprop="url">JFinal Weixin 学习笔记（8）-- 微信自定义菜单</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T11:05:43+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="自定义菜单接口"><a href="#自定义菜单接口" class="headerlink" title="自定义菜单接口"></a>自定义菜单接口</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 查询菜单</div><div class="line"> */</div><div class="line">MenuApi.getMenu();</div><div class="line"></div><div class="line">/**</div><div class="line"> * 创建菜单</div><div class="line"> */</div><div class="line">MenuApi.createMenu(String jsonStr);</div><div class="line"></div><div class="line">/**</div><div class="line"> * 自定义菜单删除接口</div><div class="line"> */</div><div class="line">MenuApi.deleteMenu();</div></pre></td></tr></table></figure>
+<h4 id="WeinxinApiController-java"><a href="#WeinxinApiController-java" class="headerlink" title="WeinxinApiController.java"></a>WeinxinApiController.java</h4><p><code>createMenu(String jsonStr)</code> 接受 json 格式的字符串，我们根据微信技术文档拼接自定义菜单字符串：</p>
+<pre><code>/**
+ * 创建菜单
+ */
+public void createMenu() {
+    String path = Constants.HOST;
+    String jsonstr = &quot;{&quot; +
+            &quot;    \&quot;button\&quot;: [&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单1\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单11\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单12\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单13\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单14\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单15\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        },&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单2\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;测　　试\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api/index\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;click\&quot;,\&quot;type\&quot;: \&quot;click\&quot;,\&quot;key\&quot;: \&quot;22\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单23\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;百度\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;http://www.baidu.com\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单25\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        },&quot; +
+            &quot;        {&quot; +
+            &quot;            \&quot;name\&quot;: \&quot;一级菜单3\&quot;,&quot; +
+            &quot;            \&quot;sub_button\&quot;: [&quot;+
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单31\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单32\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单33\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单34\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;},&quot; +
+            &quot;                {\&quot;name\&quot;: \&quot;二级菜单35\&quot;,\&quot;type\&quot;: \&quot;view\&quot;,\&quot;url\&quot;: \&quot;&quot; + path + &quot;/api\&quot;}]&quot; +
+            &quot;        }&quot; +
+            &quot;    ]&quot; +
+            &quot;}&quot;;
+    ApiResult apiResult = MenuApi.createMenu(jsonstr);
+    renderText(apiResult.getJson());
+}
+</code></pre><p>自定义菜单接口可实现多种类型按钮，详见：<a href="https://mp.weixin.qq.com/wiki" target="_blank" rel="external">微信公众平台技术文档</a>。<br>这里使用了两种：<br>1、<code>click</code>：点击推事件用户点击 click 类型按钮后，微信服务器会通过消息接口推送消息类型为 event 的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的 key 值，开发者可以通过自定义的 key 值与用户进行交互；<br>2、<code>view</code>：跳转 URL 用户点击 view 类型按钮后，微信客户端将会打开开发者在按钮中填写的网页 URL，可与网页授权获取用户基本信息接口结合，获得用户基本信息。</p>
+<p><code>getMenu()</code> 方法，查询自定义菜单：</p>
+<pre><code>/**
+ * 查询菜单
+ */
+public void getMenu() {
+    ApiResult apiResult = MenuApi.getMenu();
+    renderText(apiResult.getJson());
+}
+</code></pre><h4 id="WeixinMsgController-java"><a href="#WeixinMsgController-java" class="headerlink" title="WeixinMsgController.java"></a>WeixinMsgController.java</h4><p><code>processInMenuEvent(InMenuEvent inMenuEvent)</code>  方法接受菜单中 <code>click</code> 类型按钮的点击事件</p>
+<pre><code>// 自定义菜单事件
+@Override
+protected void processInMenuEvent(InMenuEvent inMenuEvent) {
+    OutTextMsg outMsg = new OutTextMsg(inMenuEvent);
+    outMsg.setContent(&quot;processInMenuEvent() 方法测试成功&quot;);
+    render(outMsg);
+}
+</code></pre><h4 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h4><pre><code>&lt;h3&gt;自定义菜单&lt;/h3&gt;
+点击&lt;a href=&apos;/api/createMenu&apos;&gt;【创建自定义菜单】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/getMenu&apos;&gt;【获取自定义菜单】&lt;/a&gt;&lt;br&gt;
+</code></pre><h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>点击创建菜单，微信客户端不会立马刷新。想立马看到效果，可以取消关注再关注。<br>微信菜单：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-9d135134a26c0b34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="一级菜单"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-989b1cdda1ae9bf0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="二级菜单"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-9db99bf82a64d269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="三级菜单"></p>
+<p>点击 <code>click22</code><br><img src="http://upload-images.jianshu.io/upload_images/5343805-1f2158641ce18284.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>新增了“测试”按钮，可以直接跳转主页面：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-70dcadb1095aebd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="测试页面"></p>
+<p>点击“获取自定义菜单”<br>得到 json 格式的菜单数据：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-72c4afa586b48cc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="菜单数据"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/2d740d059fa0" target="_blank" rel="external">JFinal Weixin 学习笔记（9）– 微信账号二维码</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/zyw_java/article/details/61415114" target="_blank" rel="external">微信公众号开发之自定义菜单</a><br><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95%E6%8E%A5%E5%8F%A3" target="_blank" rel="external">jfinal-weixin-wiki 自定义菜单接口</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/23/JFinal Weixin 学习笔记（7）-- 微信用户管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/23/JFinal Weixin 学习笔记（7）-- 微信用户管理/" itemprop="url">JFinal Weixin 学习笔记（7）-- 微信用户管理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T11:04:43+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="GroupsApi-接口"><a href="#GroupsApi-接口" class="headerlink" title="GroupsApi 接口"></a>GroupsApi 接口</h4><p>开发者可以使用 <code>GroupsApi</code> 接口，对公众平台的分组进行查询、创建、修改、删除等操作。  </p>
+<p>相关方法：<br><code>create(String name)</code> 方法：<br>创建分组，一个公众账号，最多支持创建 100 个分组<br>参数 name： 分组名  </p>
+<p><code>get()</code> 方法：<br>查询所有分组  </p>
+<p><code>getId(String openid)</code> 方法：<br>通过用户的OpenID查询其所在的 GroupID<br>参数 openid： 普通用户的标识，对当前开发者帐号唯一  </p>
+<p><code>update(int id, String name)</code> 方法：<br>修改分组名<br>参数 id：分组 id，由微信分配<br>参数 name： 分组名字（30 个字符以内）  </p>
+<h4 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h4><p>修改 <code>WeixinApiController.java</code>   </p>
+<pre><code>// 获取用户分组列表
+public void getGroups () {
+    ApiResult apiResult = GroupsApi.get();
+    renderJson(apiResult.getList(&quot;groups&quot;));
+}
+
+// 创建分组
+public void createGroup () {
+    Date date = new Date();
+    GroupsApi.create(date.toString());
+    ApiResult apiResult = GroupsApi.get();
+    renderJson(apiResult.getList(&quot;groups&quot;));
+}
+
+// 删除分组
+public void deleteGroup () {
+    ApiResult apiResult = null;
+    // 获取当前用户分组列表
+    apiResult = GroupsApi.get();
+    // 结果转化成 JSONArray 对象
+    JSONArray jsonArray = JSON.parseObject(apiResult.toString()).getJSONArray(&quot;groups&quot;);
+    // 删除 id &gt;= 100 的用户分组
+    for(int i = 0, size = jsonArray.size(); i &lt; size; i++){
+        // 转化成 JSONObject 对象
+        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+        // 获取分组 id
+        int id = jsonObject.getInteger(&quot;id&quot;);
+        if (id &gt;= 100){
+            // 删除用户分组
+            GroupsApi.delete(id);
+        }
+    }
+    // 获取删除后的用户数组
+    apiResult = GroupsApi.get();
+    renderJson(apiResult.getList(&quot;groups&quot;));
+}
+
+// 修改分组名
+public void updateGroup(){
+    String msg = new String();
+
+    // 更新前
+    GroupsApi.create(&quot;原分组名&quot;);
+    ApiResult apiResult = GroupsApi.get();
+    msg += &quot;更新前： &quot; + apiResult.toString() + &quot;\n&quot;;
+
+    // 结果转化成 JSONArray 对象
+    JSONArray jsonArray = JSON.parseObject(apiResult.toString()).getJSONArray(&quot;groups&quot;);
+    // 更新用户分组
+    for(int i = 0, size = jsonArray.size(); i &lt; size; i++){
+        // 转化成 JSONObject 对象
+        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+        // 获取分组名
+        String origin = jsonObject.getString(&quot;name&quot;);
+        if (&quot;原分组名&quot;.equals(origin)){
+            // 更新用户分组
+            GroupsApi.update(jsonObject.getInteger(&quot;id&quot;), &quot;新分组名&quot;);
+            break;
+        }
+    }
+
+    // 更新后
+    msg += &quot;更新后： &quot; + GroupsApi.get().toString() + &quot;\n&quot;;
+    renderText(msg);
+}
+</code></pre><p>修改 <code>index.html</code> </p>
+<pre><code>&lt;h3&gt;用户管理&lt;/h3&gt;
+点击&lt;a href=&apos;/api/getGroups&apos;&gt;【获取用户分组列表】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/createGroup&apos;&gt;【创建用户分组】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/deleteGroup&apos;&gt;【删除用户分组】&lt;/a&gt;&lt;br&gt;
+点击&lt;a href=&apos;/api/updateGroup&apos;&gt;【修改用户分组名】&lt;/a&gt;&lt;br&gt;
+</code></pre><h4 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h4><p>主页面：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-250d7a21f6ea6191.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="主页">  </p>
+<p>获取用户分组列表：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-8c170d7c51dac536.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="获取用户分组列表"></p>
+<p>创建用户分组：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-1f12e305ac37050f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="创建用户分组"></p>
+<p>删除用户分组：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-154a6af55b6672cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="删除用户分组"></p>
+<p>修改用户分组名：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-4156f14aba45b9df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="修改用户分组名"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/0039f943f91d" target="_blank" rel="external">JFinal Weixin 学习笔记（8）– 微信自定义菜单</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86" target="_blank" rel="external">jfinal-weixin-wiki 用户管理</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/20/JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/20/JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据/" itemprop="url">JFinal Weixin 学习笔记（6）-- 获取微信接口调用凭据</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-20T09:06:43+08:00">
+                2017-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="利用-AccessTokenApi-获取-access-token"><a href="#利用-AccessTokenApi-获取-access-token" class="headerlink" title="利用 AccessTokenApi 获取 access_token"></a>利用 AccessTokenApi 获取 access_token</h4><p><code>access_token</code> 是公众号的全局唯一票据，公众号调用各接口时都需使用 <code>access_token</code>。<br><code>jfinal-wein</code> 提供了 <code>AccessTokenApi</code> 接口，其中:<br><code>getAccessTokenStr()</code> 方法直接获取 <code>access_token</code> 字符串，方便使用；<br><code>getAccessToken()</code> 方法从缓存中获取 <code>access token</code>，如果未取到或者 <code>access token</code> 不可用则先更新再获取。  </p>
+<h4 id="修改-WeixinApiController-java"><a href="#修改-WeixinApiController-java" class="headerlink" title="修改 WeixinApiController.java"></a>修改 WeixinApiController.java</h4><pre><code>// 获取 access token 字符串
+public void getAccessTokenStr() {
+    String accessTokenStr = AccessTokenApi.getAccessTokenStr();
+    renderText(accessTokenStr);
+}
+
+// 获取 access token
+public void getAccessToken() {
+    AccessToken accessToken = AccessTokenApi.getAccessToken();
+    renderText(accessToken.getAccessToken());
+}
+</code></pre><h4 id="修改-index-html"><a href="#修改-index-html" class="headerlink" title="修改 index.html"></a>修改 index.html</h4><pre><code>&lt;body&gt;
+    &lt;h1&gt;欢迎来到主页&lt;/h1&gt;
+    &lt;h3&gt;获取接口调用凭据&lt;/h3&gt;
+    点击&lt;a href=&apos;/api/getAccessTokenStr&apos;&gt;【获取 access token 字符串】&lt;/a&gt;&lt;br&gt;
+    点击&lt;a href=&apos;/api/getAccessToken&apos;&gt;【获取 access token】&lt;/a&gt;&lt;br&gt;
+&lt;/body&gt;
+</code></pre><h4 id="运行项目"><a href="#运行项目" class="headerlink" title="运行项目"></a>运行项目</h4><p>打开主页面    </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-f41c64286c149d93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="主页面"></p>
+<p>点击页面链接<br>微信服务器会返回 <code>access_token</code>，如图：  </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-457cd62b7f248b14.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信服务器返回的 access_token"></p>
+<h4 id="获取微信服务器-IP-地址"><a href="#获取微信服务器-IP-地址" class="headerlink" title="获取微信服务器 IP 地址"></a>获取微信服务器 IP 地址</h4><p>如果公众号基于安全等考虑，需要获知微信服务器的 IP 地址列表，以便进行相关限制。<br>可以通过 <code>CallbackIpApi</code> 接口的 <code>getCallbackIp()</code> 方法获得微信服务器 IP 地址列表。<br>同上，修改 <code>WeixinApiController.java</code> 与 <code>index.html</code> 文件：    </p>
+<pre><code>// 获取微信服务器IP地址
+public void getCallbackIp() {
+    ApiResult apiResult = CallbackIpApi.getCallbackIp();
+    renderText(apiResult.toString());
+}
+
+// index.html 页面添加链接
+点击&lt;a href=&apos;/api/getCallbackIp&apos;&gt;【获取微信服务器 IP 地址】&lt;/a&gt;&lt;br&gt;
+</code></pre><p>运行结果：     </p>
+<pre><code>// 微信服务器 IP 地址， IP 地址很多，多余结果已略去
+{&quot;ip_list&quot;:[&quot;101.226.62.77&quot;,&quot;101.226.62.78&quot;&quot;]}
+</code></pre><hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/061ad5a23e1f" target="_blank" rel="external">JFinal Weixin 学习笔记（7）– 微信用户管理</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/%E8%8E%B7%E5%8F%96%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%E5%87%AD%E6%8D%AE" target="_blank" rel="external">jfinal-weixin-wiki 获取接口调用凭据</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/18/JFinal Weixin 学习笔记（5）-- 微信页面跳转/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/18/JFinal Weixin 学习笔记（5）-- 微信页面跳转/" itemprop="url">JFinal Weixin 学习笔记（5）-- 微信页面跳转</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T16:42:43+08:00">
+                2017-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h4><p><img src="http://upload-images.jianshu.io/upload_images/5343805-568813dea75afbc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="项目结构">  </p>
+<h4 id="WeixinApiController"><a href="#WeixinApiController" class="headerlink" title="WeixinApiController"></a>WeixinApiController</h4><p><code>WeixinApiController</code> 继承 <code>ApiController</code> ，所有使用 Api 的 controller 都需要继承此类。<br>目前没有使用 jfinal-weixin 接口，只是简单地跳转到主页。</p>
+<pre><code>package com.nancarp.controller;
+
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.jfinal.ApiController;
+import com.nancarp.utils.WeixinUtil;
+
+public class WeixinApiController extends ApiController {
+
+    /**
+     * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
+     * ApiConfig 属性值
+     */
+    @Override
+    public ApiConfig getApiConfig() {
+        return WeixinUtil.getApiConfig();
+    }
+
+    // 主页
+    public void index(){
+        render(&quot;index.html&quot;);
+    }
+
+}
+</code></pre><h4 id="Constants"><a href="#Constants" class="headerlink" title="Constants"></a>Constants</h4><p><code>Constants</code> 类保存项目中用到的常量</p>
+<pre><code>package com.nancarp.utils;
+
+import com.jfinal.kit.PropKit;
+
+public class Constants {
+    // 获取域名
+    public static String host = PropKit.get(&quot;host&quot;);
+
+}
+</code></pre><h4 id="WeixinConfig-增加路由"><a href="#WeixinConfig-增加路由" class="headerlink" title="WeixinConfig 增加路由"></a>WeixinConfig 增加路由</h4><pre><code>@Override
+public void configRoute(Routes me) {
+    // HelloWorld 路由
+    me.add(&quot;/hello&quot;,HelloWorldController.class);
+    // 接收用户消息和发送消息
+    me.add(&quot;/msg&quot;, WeixinMsgController.class);
+    // 操作微信接口
+    me.add(&quot;/api&quot;, WeixinApiController.class,&quot;/api&quot;);
+}
+</code></pre><h4 id="修改-WeixinMsgController"><a href="#修改-WeixinMsgController" class="headerlink" title="修改 WeixinMsgController"></a>修改 WeixinMsgController</h4><p><code>url</code>  要以 <code>http://</code> 或 <code>https://</code> 开头，否则微信返回的信息只是单纯的文本。</p>
+<pre><code>@Override
+protected void processInTextMsg(InTextMsg inTextMsg) {
+    // 文本内容
+    String msgContent = inTextMsg.getContent().trim();
+    // 回复主页链接
+    if (&quot;1&quot;.equals(msgContent) || &quot;主页&quot;.equals(msgContent)){
+        OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+        String url = Constants.host + &quot;/api/index&quot;;
+        String urlStr = &quot;&lt;a href=\&quot;&quot;+url+&quot;\&quot;&gt;点击跳转主页&lt;/a&gt;&quot;;
+        outMsg.setContent(urlStr);
+        render(outMsg);
+    } else {
+        // 其它文本消息直接返回原值
+        OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+        outMsg.setContent(&quot;\t文本消息已成功接收，内容为： &quot; + inTextMsg.getContent());
+        render(outMsg);
+    }
+}
+</code></pre><h4 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h4><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;title&gt;主页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;欢迎来到主页&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h4 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h4><p>不出意外，将会得到如下结果：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-36366efdc5f74778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="回复消息"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-c579c9fbffedc9e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="主页"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/cfb13d02465f" target="_blank" rel="external">JFinal Weixin 学习笔记（6）– 获取微信接口调用凭据</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://www.jianshu.com/p/6e8caa616577" target="_blank" rel="external">微信公众号开发之如何实现消息交互</a><br><a href="http://www.jfinal.com/project/2" target="_blank" rel="external">JFinal Weixin 极速开发 SDK</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/18/JFinal Weixin 学习笔记（4）-- 实现微信信息交互/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/18/JFinal Weixin 学习笔记（4）-- 实现微信信息交互/" itemprop="url">JFinal Weixin 学习笔记（4）-- 实现微信信息交互</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T13:42:43+08:00">
+                2017-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h4><p><img src="http://upload-images.jianshu.io/upload_images/5343805-cbd15bd39f5857bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="项目结构">    </p>
+<h4 id="WeixinMsgController"><a href="#WeixinMsgController" class="headerlink" title="WeixinMsgController"></a>WeixinMsgController</h4><p> <code>WixinMsgController</code>  继承自 <code>MsgControllerAdapter</code>，后者对 <code>MsgController</code> 的部分方法提供了默认实现，以便开发者不去关注 <code>MsgController</code> 中不需要处理的抽象方法，节省代码量。<br><code>getApiConfig()</code> 方法从 <code>a_little_config.txt</code> 文件中读取配置信息。<br><code>processInTextMsg()</code> 方法接受用户在微信中输入的文本信息，并对此作出相关回应。<br>现在我们实现最简单的功能，直接返回用输入的文本信息。  </p>
+<pre><code>package com.nancarp.controller;
+
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.jfinal.MsgControllerAdapter;
+import com.jfinal.weixin.sdk.msg.in.InTextMsg;
+import com.jfinal.weixin.sdk.msg.in.event.InFollowEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InMenuEvent;
+import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
+import com.nancarp.utils.WeixinUtil;
+
+public class WeixinMsgController extends MsgControllerAdapter {
+
+    /**
+     * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
+     * ApiConfig 属性值
+     */
+    @Override
+    public ApiConfig getApiConfig() {
+        return WeixinUtil.getApiConfig();
+    }
+
+    /* 
+     * 接收文本消息事件
+     */
+    @Override
+    protected void processInTextMsg(InTextMsg inTextMsg) {
+        // 其它文本消息直接返回原值
+        OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+        outMsg.setContent(&quot;\t文本消息已成功接收，内容为： &quot; + inTextMsg.getContent());
+        render(outMsg);
+    }
+
+    @Override
+    protected void processInFollowEvent(InFollowEvent inFollowEvent) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void processInMenuEvent(InMenuEvent inMenuEvent) {
+        // TODO Auto-generated method stub
+
+    }
+
+}
+</code></pre><h4 id="WeixinUtil"><a href="#WeixinUtil" class="headerlink" title="WeixinUtil"></a>WeixinUtil</h4><p><code>getApiConfig()</code> 方法，获取 <code>token</code>、<code>appId</code>、<code>appSecret</code> 信息。</p>
+<pre><code>package com.nancarp.utils;
+
+import com.jfinal.kit.PropKit;
+import com.jfinal.weixin.sdk.api.ApiConfig;
+
+/**
+ * 
+ * 公众平台通用接口工具类
+ */
+public class WeixinUtil {
+    /**
+     * 获取配置
+     */
+    public static ApiConfig getApiConfig() {
+        ApiConfig ac = new ApiConfig();
+
+        // 配置微信 API 相关常量
+        ac.setToken(PropKit.get(&quot;token&quot;));
+        ac.setAppId(PropKit.get(&quot;appId&quot;));
+        ac.setAppSecret(PropKit.get(&quot;appSecret&quot;));
+
+        /**
+         *  是否对消息进行加密，对应于微信平台的消息加解密方式：
+         *  1：true进行加密且必须配置 encodingAesKey
+         *  2：false采用明文模式，同时也支持混合模式
+         */
+        ac.setEncryptMessage(PropKit.getBoolean(&quot;encryptMessage&quot;, false));
+        ac.setEncodingAesKey(PropKit.get(&quot;encodingAesKey&quot;, &quot;setting it in config file&quot;));
+        return ac;
+    }
+}
+</code></pre><h4 id="a-little-config-txt"><a href="#a-little-config-txt" class="headerlink" title="a_little_config.txt"></a>a_little_config.txt</h4><p><code>token</code>、<code>appId</code>、<code>appSecret</code>  参数要与先前申请的测试号保持一致。<a href="http://www.jianshu.com/p/e47edf0a49bf" target="_blank" rel="external">详见《微信开发前的准备》</a>  </p>
+<pre><code># 微信服务器回调所用的 token
+token=weixin
+
+# 测试用的账号
+appId=wxde758064398fa9bf
+appSecret=89622f356fc2bca96ec647d55929afa5
+</code></pre><h4 id="WeixinConfig-配置"><a href="#WeixinConfig-配置" class="headerlink" title="WeixinConfig 配置"></a>WeixinConfig 配置</h4><pre><code>@Override
+public void configConstant(Constants me) {
+    // 加载配置文件
+    PropKit.use(&quot;a_little_config.txt&quot;);
+    // 读取配置文件，判断是否为开发模式，默认 false
+    me.setDevMode(PropKit.getBoolean(&quot;devMode&quot;, false));
+    // ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
+    ApiConfigKit.setDevMode(me.getDevMode());
+    // 默认使用的jackson，下面示例是切换到fastJson
+    //me.setJsonFactory(new FastJsonFactory());
+}
+
+@Override
+public void configRoute(Routes me) {
+    // HelloWorld 路由
+    me.add(&quot;/hello&quot;,HelloWorldController.class);
+    // 接收用户消息和发送消息
+    me.add(&quot;/msg&quot;, WeixinMsgController.class);
+}
+</code></pre><h4 id="运行项目"><a href="#运行项目" class="headerlink" title="运行项目"></a>运行项目</h4><ol>
+<li>启动 Tomcat  </li>
+<li>启动 ngrok<br>参考 <a href="http://www.cnblogs.com/zyw-205520/p/4733062.html" target="_blank" rel="external">让微信公众平台通过80端口访问本机</a>  </li>
+</ol>
+<h4 id="微信客户端的操作"><a href="#微信客户端的操作" class="headerlink" title="微信客户端的操作"></a>微信客户端的操作</h4><p>关注测试账号，输入内容“1”，测试号回复“文本消息已成功接收，内容为： 1”，大功告成。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-0ebb11e9f5a49a6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信回复信息"></p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/e7ecdc6a85f3" target="_blank" rel="external">JFinal Weixin 学习笔记（5）– 微信页面跳转</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>  </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://www.jianshu.com/p/6e8caa616577" target="_blank" rel="external">微信公众号开发之如何实现消息交互</a><br><a href="http://www.jfinal.com/project/2" target="_blank" rel="external">JFinal Weixin 极速开发 SDK</a><br><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/JFinal-weixin%E4%B8%AD%E7%9A%84WeixinConfig%E9%85%8D%E7%BD%AE" target="_blank" rel="external">JFinal weixin中的WeixinConfig配置</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架/" itemprop="url">JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:13:43+08:00">
+                2017-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="新建-Eclipse-项目"><a href="#新建-Eclipse-项目" class="headerlink" title="新建 Eclipse 项目"></a>新建 Eclipse 项目</h4><p>新建 Dynamic Web Project<br>项目名： jfinal-weixin-nancarp<br>服务器： Tomcat v8.0  </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-dbcb971fe77773e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
+<h4 id="导入-jar-包"><a href="#导入-jar-包" class="headerlink" title="导入 jar 包"></a>导入 jar 包</h4><p>项目必需以下 jar 包，或者更高版本    </p>
+<pre><code>// jfinal 核心包
+--jfinal-2.2.jar
+
+// jfinal 微信开发 jar 包
+--jfinal-weixin-1.8-bin-with-src.jar
+
+// 可选Json处理包，必选其一
+--fastjson-1.2.6.jar
+//或者
+--jackson-databind-2.4.3.jar
+----jackson-annotations-2.4.0.jar
+----jackson-core-2.4.3.jar
+</code></pre><p>所需 jar 包可以在 JFinal 社区下载：<a href="http://www.jfinal.com/" target="_blank" rel="external">http://www.jfinal.com/</a>  </p>
+<h4 id="搭建-JFinal-框架"><a href="#搭建-JFinal-框架" class="headerlink" title="搭建 JFinal 框架"></a>搭建 JFinal 框架</h4><p>项目结构  ：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/5343805-a4b5f842c6e7d478.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
+<p><strong>WeixinConfig.java：</strong>  </p>
+<pre><code>package com.nancarp.config;
+
+import com.jfinal.config.Constants;
+import com.jfinal.config.Handlers;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
+import com.jfinal.config.Plugins;
+import com.jfinal.config.Routes;
+import com.jfinal.kit.PropKit;
+import com.jfinal.template.Engine;
+import com.nancarp.controller.HelloWorldController;
+
+public class WeixinConfig extends JFinalConfig{
+
+    @Override
+    public void configConstant(Constants me) {
+        // 加载配置文件
+        PropKit.use(&quot;a_little_config.txt&quot;);
+        // 读取配置文件，判断是否为开发模式，默认 false
+        me.setDevMode(PropKit.getBoolean(&quot;devMode&quot;, false));
+    }
+
+    @Override
+    public void configRoute(Routes me) {
+        // HelloWorld 路由
+        me.add(&quot;/hello&quot;,HelloWorldController.class);
+    }
+
+    @Override
+    public void configEngine(Engine me) {
+
+    }
+
+    @Override
+    public void configPlugin(Plugins me) {
+
+    }
+
+    @Override
+    public void configInterceptor(Interceptors me) {
+
+    }
+
+    @Override
+    public void configHandler(Handlers me) {
+
+    }
+
+}
+</code></pre><p><strong>HelloWorldController.java：</strong>  </p>
+<pre><code>package com.nancarp.controller;
+
+import com.jfinal.core.Controller;
+
+public class HelloWorldController extends Controller {
+    public void index() {
+        renderText(&quot;Hello World!&quot;);
+    }
+}
+</code></pre><p><strong>a_little_config.txt：</strong>  </p>
+<pre><code># 数据库相关设置
+jdbcUrl=jdbc:mysql://localhost/__数据库名__?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull
+user=_数据库账号_
+password=_数据库密码_
+
+# 开发模式
+devMode = true
+
+# 微信服务器回调所用的 token
+token=weixin
+
+# 测试用的账号
+appId=wxde758064398fa9bf
+appSecret=89622f356fc2bca96ec647d55929afa5
+#webAppId=___web appid___
+#webAppSecret=_________web appSecret____
+
+#是否对消息进行加密，是否对消息进行加密，对应于微信平台的消息加解密方式，false支持明文模式及兼容模式，true支持安全模式及兼容模式
+encryptMessage=false
+encodingAesKey=5C8csBd4cG4c9039OKDnNaZmYlkAzXV31piXQFRZKHC
+
+#####业务逻辑中的华丽的分割线#########
+#授权域名
+domain=http://********.com
+subscribe_rul=http://mp.weixin.qq.com/s?__biz=MzA4MDA2OTA0Mg==&amp;mid=208184833&amp;idx=1&amp;sn=d9e615e45902c3c72db6c24b65c4af3e#rd
+host=http://*****.com
+</code></pre><p><strong>web.xml：</strong>  </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot; xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot; id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
+  &lt;filter&gt;
+        &lt;filter-name&gt;jfinal&lt;/filter-name&gt;
+        &lt;filter-class&gt;com.jfinal.core.JFinalFilter&lt;/filter-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;configClass&lt;/param-name&gt;
+            &lt;param-value&gt;com.nancarp.config.WeixinConfig&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/filter&gt;
+
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;jfinal&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+&lt;/web-app&gt;  
+</code></pre><h4 id="项目部署到-Tomcat-上"><a href="#项目部署到-Tomcat-上" class="headerlink" title="项目部署到 Tomcat 上"></a>项目部署到 Tomcat 上</h4><p><img src="http://upload-images.jianshu.io/upload_images/5343805-cbee124232eabea5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
+<p>修改 server.xml 文件    </p>
+<pre><code>&lt;Connector connectionTimeout=&quot;20000&quot; port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot; redirectPort=&quot;8443&quot;/&gt;
+// 修改端口号为 80 ，因为微信只支持 80 或 443 端口
+&lt;Connector connectionTimeout=&quot;20000&quot; port=&quot;80&quot; protocol=&quot;HTTP/1.1&quot; redirectPort=&quot;8443&quot;/&gt;
+
+
+&lt;Context docBase=&quot;jfinal-weixin-nancarp&quot; path=&quot;/jfinal-weixin-nancarp&quot; reloadable=&quot;true&quot; source=&quot;org.eclipse.jst.jee.server:jfinal-weixin-nancarp&quot;/&gt;
+// path 修改为&quot;/&quot;，这样 url 就不需要带上项目名
+&lt;Context docBase=&quot;jfinal-weixin-nancarp&quot; path=&quot;/&quot; reloadable=&quot;true&quot; source=&quot;org.eclipse.jst.jee.server:jfinal-weixin-nancarp&quot;/&gt;
+</code></pre><h4 id="运行项目"><a href="#运行项目" class="headerlink" title="运行项目"></a>运行项目</h4><p>启动 tomcat，在浏览器输入 <a href="http://localhost/hello" target="_blank" rel="external">localhost/hello</a>，回车。<br>看到熟悉的 “Hello World” 就说明框架搭建成功。</p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/191abc4da94d" target="_blank" rel="external">JFinal Weixin 学习笔记（4）– 实现微信信息交互</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a></p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/JFinal-weixin-1.6-Jar%E4%BE%9D%E8%B5%96" target="_blank" rel="external">JFinal-weixin Jar包依赖</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -272,7 +1623,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/" itemprop="url">JFinal Weixin 学习笔记（1）-- 目录</a></h1>
+                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/" itemprop="url">JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作</a></h1>
         
 
         <div class="post-meta">
@@ -659,7 +2010,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
