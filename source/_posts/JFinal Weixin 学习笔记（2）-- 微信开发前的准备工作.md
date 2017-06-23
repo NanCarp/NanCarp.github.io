@@ -1,5 +1,5 @@
 ---
-title: JFinal Weixin 学习笔记（1）-- 目录
+title: JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作
 date: 2017-05-17 10:23:43
 tags: JFinal 微信
 ---
