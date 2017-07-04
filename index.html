@@ -253,6 +253,155 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/28/在 Node.js 中使用事件、监听器、定时器和回调/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/28/在 Node.js 中使用事件、监听器、定时器和回调/" itemprop="url">在 Node.js 中使用事件、监听器、定时器和回调</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-28T21:31:29+08:00">
+                2017-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="在-Node-js-中使用事件、监听器、定时器和回调"><a href="#在-Node-js-中使用事件、监听器、定时器和回调" class="headerlink" title="在 Node.js 中使用事件、监听器、定时器和回调"></a>在 Node.js 中使用事件、监听器、定时器和回调</h1><h3 id="4-2-1-实现定时器"><a href="#4-2-1-实现定时器" class="headerlink" title="4.2.1 实现定时器"></a>4.2.1 实现定时器</h3><p><strong>用超时时间来延迟工作</strong><br>超时定时器用于将工作延迟一个特定时间数量。当时间到了时，回调函数执行，而定时器会消失。对于只需要执行一次的工作，<br>应当使用超时时间。<br>创建超时时间定时器使用 Node.js 中内置的 setTimeout(callback, delayMilliSeconds, [args]) 方法。当你调用<br>setTimeout() 时，回调函数在 delayMilliSeconds 到期后执行。例如，下面的语句在 1 秒后执行 myFunc()：<br><code>setTimeout(myFunc, 1000)</code><br>setTimeout() 函数返回定时器对象的 ID，可以在 delayMilliSeconds 到期前任何时候把此 ID 传递给 clearTimeout(timeoutId)<br>来取消超时时间函数。<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">myTimeout = setTimeout(myFunc,, 100000);</div><div class="line">...</div><div class="line">clearTimeout(myTimeout);</div></pre></td></tr></table></figure></p>
+<p>以下代码实现了调用 simpleTimeout() 函数的一系列简单超时时间，它输出自从超时时间被安排后经历的毫秒数。请注意，<br>setTimeout() 的调用次序是无关紧要的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// simple_timer.js 在不同的时间间隔实现了一系列超时时间</div><div class="line">function simpleTimeout(consoleTimer) &#123;</div><div class="line">	console.timeEnd(consoleTimer);</div><div class="line">&#125;</div><div class="line">console.time(&quot;twoSecond&quot;);</div><div class="line">setTimeout(simpleTimeout, 2000, &quot;twoSecond&quot;);</div><div class="line">console.time(&quot;oneSecond&quot;);</div><div class="line">setTimeout(simpleTimeout, 1000, &quot;oneSecond&quot;);</div><div class="line">console.time(&quot;fiveSecond&quot;);</div><div class="line">setTimeout(simpleTimeout, 5000, &quot;fiveSecond&quot;);</div><div class="line">console.time(&quot;50MilliSecond&quot;);</div><div class="line">setTimeout(simpleTimeout, 50, &quot;50MilliSecond&quot;);</div></pre></td></tr></table></figure></p>
+<p>下面结果按照其中的延时结束的顺序出现。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node simple_timer.js</div><div class="line">50MilliSecond: 51.578ms</div><div class="line">oneSecond: 999.679ms</div><div class="line">twoSecond: 2001.768ms</div><div class="line">fiveSecond: 5000.161ms</div></pre></td></tr></table></figure></p>
+<p><strong>用时间间隔执行定期工作</strong><br>时间间隔定时器用于按定期的延迟时间执行工作。当延时结束时，回调函数被执行，然后再次重新调度为改延迟时间，对于必须<br>定期进行的工作，你应该使用时间间隔。<br>可以通过 Node,js 中内置的 setInterval(callback, delayMilliSeconds, [args]) 方法创建时间间隔计时器。当你调用<br>setInterval() 时，么个 delayMilliSeconds 间隔到后，回调函数执行。例如，下面的语句每秒执行一次  myFunc()：<br><code>setInterval(myFunc, 1000);</code><br>setInterval() 函数返回定时器对象的 ID，你可以在 delayMilliSeconds 到期前把 ID 传递给 clearInterval(intervalId)<br>来取消超时时间函数。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">myInterval = setInterval(myFunc, 1000);</div><div class="line">...</div><div class="line">clearInterval(myInterval);</div></pre></td></tr></table></figure></p>
+<p>下面的代码实现了一系列在不同的时间间隔更新变量 x、y 和 z 值得简单时间间隔回调。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// simple_interval.js 在不同的时间间隔实现了一系列的更新回调</div><div class="line">var x=0, y=0, z=0;</div><div class="line">function displayValue() &#123;</div><div class="line">	console.log(&quot;X=%d; Y=%d; Z=%d&quot;, x, y, z);</div><div class="line">&#125;</div><div class="line">function updateX() &#123;</div><div class="line">	x += 1;</div><div class="line">&#125;</div><div class="line">function updateY() &#123;</div><div class="line">	y += 1;</div><div class="line">&#125;</div><div class="line">function updateZ() &#123;</div><div class="line">	z += 1;</div><div class="line">	displayValue();</div><div class="line">&#125;</div><div class="line">setInterval(updateX, 500);</div><div class="line">setInterval(updateY, 1000);</div><div class="line">setInterval(updateZ, 2000);</div></pre></td></tr></table></figure></p>
+<p>请注意 x、y 和 z 的值的改变不同，因为该时间间隔量是不同的；x 得递增速度是 y 的两倍，y 的递增速度又是 z 的两倍，<br>输出如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ node simple_interval.js</div><div class="line">X=3; Y=1; Z=1</div><div class="line">X=7; Y=3; Z=2</div><div class="line">X=11; Y=5; Z=3</div><div class="line">X=15; Y=7; Z=4</div><div class="line">X=19; Y=9; Z=5</div><div class="line">X=23; Y=11; Z=6</div><div class="line">X=27; Y=13; Z=7</div><div class="line">X=31; Y=15; Z=8</div><div class="line">X=35; Y=17; Z=9</div><div class="line">X=39; Y=19; Z=10</div><div class="line">X=43; Y=21; Z=11</div><div class="line">X=47; Y=23; Z=12</div></pre></td></tr></table></figure></p>
+<p><strong>使用及时计时器立即执行工作</strong><br>即时计时器用来在 I/O 事件的回调函数开始执行后，但任何超时时间或时间间隔事件被执行之前，立刻执行工作。它们允许你<br>把工作调度为在事件队列中的当前事件完成之后执行。你应该使用即时定时器为其他回调产生长期运行的执行段，以防止 I/O<br>事件饥饿。<br>可以使用 Node.js 中内置的 setImmediate(callback, [args]) 方法创建即时计时器。当你调用 setImmediate() 时，<br>回调函数被放置在事件队列中，并在遍历事件队列循环的每次迭代中，在 I/O 有机会被调用后弹出一次。例如，下面的代码调度<br>myFunc() 来在遍历事件队列的下一个周期内执行：<br><code>setimmediate(myFunc(), 1000);</code><br>setImmediate() 函数返回一个定时器对象的 ID，你可以在从事件队列提取出它前的任何时候把 ID 传递给 clearImmediate(<br>immediateId)。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">myImmediate = setImmediate(myFunc);</div><div class="line">...</div><div class="line">clearImmediate(myImmediate);</div></pre></td></tr></table></figure></p>
+<p><strong>从事件循环中取消定时器引用</strong><br>当定时器事件回调是留在事件队列中的仅有事件时，通常你不会希望它们继续被调度。setInterval 和 setTimeout 返回的对象<br>中的 unref() 函数，能在这些事件是队列中仅有的事件时，通知事件循环不要继续。<br>例如，下面的代码取消 myInterval 时间间隔定时器引用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">myInterval = setInterval(myFunc);</div><div class="line">myInterval.unref();</div></pre></td></tr></table></figure></p>
+<p>如果以后由于某种原因，你不想在时间间隔函数是留在队列中的仅有事件时终止程序，就可以使用 ref() 函数来重新引用它：<br><code>myInterval.ref()</code>  </p>
+<blockquote>
+<p><strong>警告</strong><br>当 unref() 与 setTimeout 定时器结合使用时，要用一个独立的定时器来唤醒时间循环。大量使用这些功能会对你<br>的代码性能产生不利影响，所以应该尽量少地创建它们。  </p>
+</blockquote>
+<h3 id="4-2-2-使用-nextTick-来调度工作"><a href="#4-2-2-使用-nextTick-来调度工作" class="headerlink" title="4.2.2 使用 nextTick 来调度工作"></a>4.2.2 使用 nextTick 来调度工作</h3><p>在事件队列上调度工作的一个非常有用的方法是使用 process.nextTick(callback) 函数。此函数调度要在事件循环的下一次<br>循环中运行的工作。不像 setImmediate() 方法，nextTick() 在 I/O 事件被触发之前执行。这可能会导致 I/O 事件的饥饿，<br>所以 Node.js 通过默认值为 1000 的 process.maxTickDepth 来限制事件队列的每次循环可执行的 nextTick 事件的数目。<br>下面的代码说明了使用阻塞 I/O 调用、定时器和 nextTick() 时，事件的顺序。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// nexttick.js：实现了一系列阻塞 fs 调用，即时计时器和 nextTick() 调用来显示执行顺序</div><div class="line">var fs = require(&quot;fs&quot;);</div><div class="line">fs.stat(&quot;nexttick.js&quot;, function(err, stats) &#123;</div><div class="line">	if(stats) &#123;</div><div class="line">		console.log(&quot;nexttick.js Exists&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line">setImmediate(function() &#123;</div><div class="line">	console.log(&quot;Immediate Timer 1 Executed&quot;);</div><div class="line">&#125;);</div><div class="line">setImmediate(function() &#123;</div><div class="line">	console.log(&quot;Immediate Timer 2 Executed&quot;);</div><div class="line">&#125;);</div><div class="line">process.nextTick(function() &#123;</div><div class="line">	console.log(&quot;Next Tick 1 Executed&quot;);</div><div class="line">&#125;);</div><div class="line">process.nextTick(function() &#123;</div><div class="line">	console.log(&quot;Next Tick 2 Executed&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出如下，显示 nextTick() 调用先得到执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ node nexttick.js</div><div class="line">Next Tick 1 Executed</div><div class="line">Next Tick 2 Executed</div><div class="line">Immediate Timer 1 Executed</div><div class="line">Immediate Timer 2 Executed</div><div class="line">nexttick.js Exists</div></pre></td></tr></table></figure></p>
+<h3 id="4-2-3-实现事件发射器和监听器"><a href="#4-2-3-实现事件发射器和监听器" class="headerlink" title="4.2.3 实现事件发射器和监听器"></a>4.2.3 实现事件发射器和监听器</h3><p>本节重点介绍创建自己的自定义事件，以及实现党一个事件被发出时执行的监听器回调。<br><strong>将自定义事件添加到 JavaSript 对象</strong><br>事件使用一个 EventEmitter 对象来发出。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var events = require(&apos;events&apos;);</div><div class="line">var emitter = new events.EventEmitter();</div><div class="line">emitter.emit(&quot;simpleEvent&apos;);</div></pre></td></tr></table></figure></p>
+<p>直接把事件添加到 JavaScript 对象，需要通过在对象实例中调用 events.EventEmitter.call(this) 来在对象中继承<br>EventEmitter 功能，还需要把 events.EventEmitter.prototype 添加到对象的原型中。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Function MyObj() &#123;</div><div class="line">    Events.EventEmitter.call(this);</div><div class="line">&#125;</div><div class="line">MyObj.prototype.__proto__ = events.EventEmitter.prototype;</div></pre></td></tr></table></figure></p>
+<p>然后，就可以直接从对象实例中触发事件。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var myObj = new MyObj();</div><div class="line">myObj.emit(&quot;someEvent&quot;):</div></pre></td></tr></table></figure></p>
+<p><strong>把事件监听器添加到对象</strong><br>一旦有了一个会发出事件的对象实例，就可以喂自己所关心的事件添加监听器。可以通过使用下面的功能之一把监听器添加到<br>EventEmitter 对象。  </p>
+<ul>
+<li><strong>.addListener(eventName, callback)</strong>：将回调函数附加到对象的监听器中。每当 eventName 事件被触发时，<br>回调函数就被放置在事件队列中执行。</li>
+<li><strong>.on(eventName, callback)</strong>：同 .addListener()。</li>
+<li><strong>.once(eventName, callback)</strong>：只有 eventName 事件第一次被触发时，回调函数才被放置在事件队列中执行。  </li>
+</ul>
+<p>例如，要在前面定义的 MyObject EventEmitter 类的实例中增加一个监听器，可以使用如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function myCallback() &#123;</div><div class="line">    ...</div><div class="line">&#125;</div><div class="line">var myObject = new MyObj();</div><div class="line">myObject.on(&quot;someEvent&quot;, myCallback);</div></pre></td></tr></table></figure></p>
+<p><strong>从对象中删除监听器</strong><br>监听器会导致开销，只在必要时使用。Node.js 在 EventEmitter 对象上提供了多个辅助函数来管理监听器。  </p>
+<ul>
+<li><strong>.listener(eventName)：</strong> 返回一个连接到 eventName 事件的监听器函数的数组。</li>
+<li><strong>.setMaxListeners(n)：</strong> 如果多于 n 的监听器都加入到 EventEmitter 对象，就会触发警报。默认值 10。</li>
+<li><strong>.removeListener(eventName, callback)：</strong> 将 callback 函数从 EventEmitter 对象的 eventName 事件中删除。  </li>
+</ul>
+<p><strong>实现事件监听器和发射器事件</strong><br>一下代码演示在 Node.js 实现监听器和自定义事件发射器的过程。Account 对象从 EventEmitter 类继承并提供了两种方法，即<br>deposit（存款）和 withdraw（取款），它们都发射 balanceChanged 事件。然后，3 个回调函数的实现连接到 Account 对象<br>实例的 balanceChanged 事件并显示各种形式的数据。<br>请注意，checkGoal(acc, goal) 回调函数的实现有点不同于其他回调函数。这说明了如何在事件被触发时，将变量传递到该事件<br>监听函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">// emitter_listener.js：创建一个自定义 EventEmitter 对象并实现当</div><div class="line">// balanceChanged 事件被触发时所触发的 3 个监听器</div><div class="line">var events = require(&apos;events&apos;);</div><div class="line">function Account() &#123;</div><div class="line">	this.balance = 0;</div><div class="line">	events.EventEmitter.call(this);</div><div class="line">	this.deposit = function(amount) &#123;</div><div class="line">		this.balance += amount;</div><div class="line">		this.emit(&apos;balanceChanged&apos;);</div><div class="line">	&#125;;</div><div class="line">	this.withdraw = function(amount) &#123;</div><div class="line">		this.balance -= amount;</div><div class="line">		this.emit(&apos;balanceChanged&apos;);</div><div class="line">	&#125;;</div><div class="line">&#125;</div><div class="line">Account.prototype.__proto__ = events.EventEmitter.prototype;</div><div class="line">function displayBalance()&#123;</div><div class="line">	console.log(&quot;Account balance: $%d&quot;, this.balance);</div><div class="line">&#125;</div><div class="line">function checkOverdraw() &#123;</div><div class="line">	if (this.balance &lt; 0) &#123;</div><div class="line">		console.log(&quot;Account overdrawn!!!&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">function checkGoal(acc, goal) &#123;</div><div class="line">	if (acc.balance &gt; goal) &#123;</div><div class="line">		console.log(&quot;Goal Achieved!!!&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">var account = new Account();</div><div class="line">account.on(&quot;balanceChanged&quot;, displayBalance);</div><div class="line">account.on(&quot;balanceChanged&quot;, checkOverdraw);</div><div class="line">account.on(&quot;balanceChanged&quot;, function() &#123;</div><div class="line">	checkGoal(this, 1000);</div><div class="line">&#125;);</div><div class="line">account.deposit(220);</div><div class="line">account.deposit(320);</div><div class="line">account.deposit(600);</div><div class="line">account.withdraw(1200);</div></pre></td></tr></table></figure></p>
+<p>emitter_listener.js 的输出，显示了监听器回调函数输出的会计报表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ node emitter_listener.js</div><div class="line">Account balance: $220</div><div class="line">Account balance: $540</div><div class="line">Account balance: $1140</div><div class="line">Goal Achieved!!!</div><div class="line">Account balance: $-60</div><div class="line">Account overdrawn!!!</div></pre></td></tr></table></figure></p>
+<h2 id="4-3-实现回调"><a href="#4-3-实现回调" class="headerlink" title="4.3 实现回调"></a>4.3 实现回调</h2><h3 id="4-3-1-向回调函数传递额外的参数"><a href="#4-3-1-向回调函数传递额外的参数" class="headerlink" title="4.3.1 向回调函数传递额外的参数"></a>4.3.1 向回调函数传递额外的参数</h3><p>大部分回调函数都有传递给它们的自动参数，如错误或结果缓冲区。使用回调时，常见的一个问题是如何从调用函数给它们传递额外<br>的参数。方法是在一个匿名函数中实现该参数，然后用来自匿名函数的参数调用回调函数。<br>一下代码展示了如何实现回调函数的参数。有两个 sawCar 事件处理程序。请注意，sawCar 仅发出 make 参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">// callback_parameter.js 创建一个匿名函数来添加未由事件发出的附加参数</div><div class="line">var events = require(&apos;events&apos;);</div><div class="line">function CarShow() &#123;</div><div class="line">	events.EventEmitter.call(this);</div><div class="line">	this.seeCar = function(make) &#123;</div><div class="line">		this.emit(&apos;sawCar&apos;, make);</div><div class="line">	&#125;;</div><div class="line">&#125;</div><div class="line">CarShow.prototype.__proto__ = events.EventEmitter.prototype;</div><div class="line">var show = new CarShow();</div><div class="line">function logCar(make) &#123;</div><div class="line">	console.log(&quot;Saw a &quot; + make);</div><div class="line">&#125;</div><div class="line">function logColorCar(make, color) &#123;</div><div class="line">	console.log(&quot;Saw a %s %s&quot;, color, make);</div><div class="line">&#125;</div><div class="line">// 实现了 logCar(make) 回调处理程序</div><div class="line">show.on(&quot;sawCar&quot;, logCar);</div><div class="line">// 事件处理程序调用了一个匿名函数，随机选择的颜色被传递到 logColorCar(make, color) 调用</div><div class="line">show.on(&quot;sawCar&quot;, function(make) &#123;</div><div class="line">	var colors = [&apos;red&apos;, &apos;blue&apos;, &apos;black&apos;];</div><div class="line">	var color = colors[Math.floor(Math.random() * 3)];</div><div class="line">	logColorCar(make, color);</div><div class="line">&#125;);</div><div class="line">show.seeCar(&quot;Ferrari&quot;);</div><div class="line">show.seeCar(&quot;Porsche&quot;);</div><div class="line">show.seeCar(&quot;Bugatti&quot;);</div><div class="line">show.seeCar(&quot;Lamborghini&quot;);</div><div class="line">show.seeCar(&quot;Aston Martin&quot;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ node callback_parameter</div><div class="line">Saw a Ferrari</div><div class="line">Saw a blue Ferrari</div><div class="line">Saw a Porsche</div><div class="line">Saw a blue Porsche</div><div class="line">Saw a Bugatti</div><div class="line">Saw a blue Bugatti</div><div class="line">Saw a Lamborghini</div><div class="line">Saw a red Lamborghini</div><div class="line">Saw a Aston Martin</div><div class="line">Saw a black Aston Martin</div></pre></td></tr></table></figure></p>
+<h3 id="4-3-2-在回调中实现闭包"><a href="#4-3-2-在回调中实现闭包" class="headerlink" title="4.3.2 在回调中实现闭包"></a>4.3.2 在回调中实现闭包</h3><p>一个与异步回调的有趣问题是闭包。闭包（Closure） 是一个 JavaScript 的术语，它表示变量被绑定到一个函数的作用域，但<br>不绑定到它的父函数的作用域。当你执行一个异步回调时，父函数的作用域可能更改（例如，通过遍历列表并在每次迭代时改变值）。<br>如果某个函数需要访问父函数的作用域的变量，就需要提供闭包，使这些值在回调函数从事件队列被提取出时可以得到。一个基本<br>方法是在函数块内部封装一个异步调用，并传入所需要的变量。<br>下面代码说明了如何实现为 logCar() 异步函数提供闭包的包装器函数。循环 1 实现了一个基本的回调函数。然而，输出显示中，<br>汽车的名字始终是被读取的最后一个条目，因为每次循环迭代时， message 的值都会变化。<br>循环 2 实现了把消息作为 msg 参数传递的包装器函数，而 msg 值被附着在回调函数上。因此，输出了正确的消息。为了使回调<br>真正异步，使用 process.nextTick() 方法来调度函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">// callback_closure.js：创建一个包装器函数来提供异步回调所需的变量的闭包</div><div class="line">function logCar(logMsg, callback) &#123;</div><div class="line">	process.nextTick(function() &#123;</div><div class="line">		callback(logMsg);</div><div class="line">	&#125;);</div><div class="line">&#125;</div><div class="line">var cars = [&quot;Ferrari&quot;, &quot;Porsche&quot;, &quot;Bugatti&quot;];</div><div class="line">// 循环 1，基本的回调函数</div><div class="line">for (var idx in cars) &#123;</div><div class="line">	var message = &quot;Saw a &quot; + cars[idx];</div><div class="line">	logCar(message, function() &#123;</div><div class="line">		console.log(&quot;Normal Callback: &quot; + message);</div><div class="line">	&#125;);</div><div class="line">&#125;</div><div class="line">// 循环 2，把消息作为 msg 参数传递的包装器函数函数</div><div class="line">for (var idx in cars) &#123;</div><div class="line">	var message = &quot;Saw a &quot; + cars[idx];</div><div class="line">	(function(msg) &#123;</div><div class="line">		logCar(msg, function() &#123;</div><div class="line">			console.log(&quot;Closure Callback: &quot; + msg);</div><div class="line">		&#125;);</div><div class="line">	&#125;)(message);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ node callback_closure.js</div><div class="line">Normal Callback: Saw a Bugatti</div><div class="line">Normal Callback: Saw a Bugatti</div><div class="line">Normal Callback: Saw a Bugatti</div><div class="line">Closure Callback: Saw a Ferrari</div><div class="line">Closure Callback: Saw a Porsche</div><div class="line">Closure Callback: Saw a Bugatti</div></pre></td></tr></table></figure></p>
+<h3 id="4-3-3-链式回调"><a href="#4-3-3-链式回调" class="headerlink" title="4.3.3 链式回调"></a>4.3.3 链式回调</h3><p>使用异步函数时，如果两个函数都在事件队列上，无法保证它们的运行顺序。最佳方法是让来自异步函数的回调在此调用该函数，<br>直到没有更多的工作要做，以执行链式回调。这样，异步函数永远不会在时间队列上超过一次。<br>以下代码中，条目列表被传递到函数 logCars()，然后异步函数 logCar() 被调用，并且 logCars() 函数作为当 logCar() 完成<br>时的回调函数。一次，同一时间只有一个版本的 logCar() 在事件队列上。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// callback_chain.js：实现一个回调链，在此来自一个匿名函数的</div><div class="line">// 回调函数回调到最初的函数来遍历列表</div><div class="line">function logCar(car, callback) &#123;</div><div class="line">	console.log(&quot;Saw a %s&quot;, car);</div><div class="line">	if(cars.length) &#123;</div><div class="line">		process.nextTick(function() &#123;</div><div class="line">			callback();</div><div class="line">		&#125;);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">function logCars(cars) &#123;</div><div class="line">	var car = cars.pop();</div><div class="line">	logCar(car, function() &#123;</div><div class="line">		logCars(cars);</div><div class="line">	&#125;);</div><div class="line">&#125;</div><div class="line">var cars = [&quot;Ferrari&quot;, &quot;Porsche&quot;, &quot;Bugatti&quot;, &quot;Lamborghini&quot;, &quot;Aston Martin&quot;];</div><div class="line">logCars(cars);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ node callback_chain.js</div><div class="line">Saw a Aston Martin</div><div class="line">Saw a Lamborghini</div><div class="line">Saw a Bugatti</div><div class="line">Saw a Porsche</div><div class="line">Saw a Ferrari</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/27/开始使用 Node.js/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1888,134 +2037,6 @@ host=http://*****.com
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="NanCarp">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李子园">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/" itemprop="url">JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T10:23:43+08:00">
-                2017-05-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h4 id="在微信公众平台注册成为开发者"><a href="#在微信公众平台注册成为开发者" class="headerlink" title="在微信公众平台注册成为开发者"></a>在微信公众平台注册成为开发者</h4><p>微信公众平台官网：<br><a href="http://www.baidu.com/link?url=tYmv6hajaTZAcKBeumvkCUp3yPpwyhcDxbxYTS3V3dO0O4Dv80GZXTlwxYn_8awE" target="_blank" rel="external">https://mp.weixin.qq.com/</a><br>注册可以参考百度经验上的回答：<br><a href="https://jingyan.baidu.com/article/6525d4b134051eac7d2e9417.html" target="_blank" rel="external">https://jingyan.baidu.com/article/6525d4b134051eac7d2e9417.html</a></p>
-<p>微信公众平台主页面：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-9f4bdf2be9481016.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-<h4 id="接口的测试账号申请"><a href="#接口的测试账号申请" class="headerlink" title="接口的测试账号申请"></a>接口的测试账号申请</h4><p>个人账号权限比较少，建议申请测试账号：<br><a href="http://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">进入微信公众帐号测试号申请系统</a></p>
-<p>或者在开发者工具中进入公众平台测试账号：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-c6400ba5740ad959.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><img src="http://upload-images.jianshu.io/upload_images/5343805-e55f2cc1cef0ad40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-<h4 id="公众平台测试账号相关设置"><a href="#公众平台测试账号相关设置" class="headerlink" title="公众平台测试账号相关设置"></a>公众平台测试账号相关设置</h4><ol>
-<li><p>测试账号信息<br>appID（应用 ID）、appsecret（应用秘钥）<br><img src="http://upload-images.jianshu.io/upload_images/5343805-d5dc7bbc1050ac0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-</li>
-<li><p>接口配置<br>URL： 填写自己的服务器地址，<strong>注意结尾一定要加上“/msg”</strong>。<br>关于服务器资源的获取，可以用 ngrok 来将自己本地的 tomcat 接口映射为 80 端口：<br><a href="http://www.cnblogs.com/zyw-205520/p/4733062.html" target="_blank" rel="external">让微信公众平台通过80端口访问本机</a><br>Token： 自定义<br><img src="http://upload-images.jianshu.io/upload_images/5343805-61056e30d665d56b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
-</li>
-<li><p>JS 接口安全域名<br>填写服务器域名，<strong>开头不需要加上“ http:// ”</strong>。<br><img src="http://upload-images.jianshu.io/upload_images/5343805-3e11ef73ba57dfd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
-</li>
-</ol>
-<p>到此为止，最基础的配置就已经做好了，可以进行下一步的工作。  </p>
-<hr>
-<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/fbf80b794c65" target="_blank" rel="external">JFinal Weixin 学习笔记（3）– Eclipse 搭建项目框架</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>    </p>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://www.baidu.com/link?url=DmdinFOZnfkROj6jj0xrJI-4d67eguNmo9J6XTqfnolcWwzr-8sFam7KQ_rDGHz9s1Xlt9_G-TmwftIXoQo90K&amp;wd=&amp;eqid=c1d1a0a50006354f00000005591bacff" target="_blank" rel="external">微信公众平台测试帐号的注册与使用 - 人生无赖 - 博客园</a><br><a href="http://www.jianshu.com/p/a87d4b9f9424" target="_blank" rel="external">微信公众号开发之成为开发者模式</a><br><a href="https://mp.weixin.qq.com/wiki" target="_blank" rel="external">微信公众平台技术文档 </a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2065,7 +2086,7 @@ host=http://*****.com
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

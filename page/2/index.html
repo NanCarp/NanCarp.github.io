@@ -253,6 +253,134 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作/" itemprop="url">JFinal Weixin 学习笔记（2）-- 微信开发前的准备工作</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T10:23:43+08:00">
+                2017-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h4 id="在微信公众平台注册成为开发者"><a href="#在微信公众平台注册成为开发者" class="headerlink" title="在微信公众平台注册成为开发者"></a>在微信公众平台注册成为开发者</h4><p>微信公众平台官网：<br><a href="http://www.baidu.com/link?url=tYmv6hajaTZAcKBeumvkCUp3yPpwyhcDxbxYTS3V3dO0O4Dv80GZXTlwxYn_8awE" target="_blank" rel="external">https://mp.weixin.qq.com/</a><br>注册可以参考百度经验上的回答：<br><a href="https://jingyan.baidu.com/article/6525d4b134051eac7d2e9417.html" target="_blank" rel="external">https://jingyan.baidu.com/article/6525d4b134051eac7d2e9417.html</a></p>
+<p>微信公众平台主页面：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-9f4bdf2be9481016.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h4 id="接口的测试账号申请"><a href="#接口的测试账号申请" class="headerlink" title="接口的测试账号申请"></a>接口的测试账号申请</h4><p>个人账号权限比较少，建议申请测试账号：<br><a href="http://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">进入微信公众帐号测试号申请系统</a></p>
+<p>或者在开发者工具中进入公众平台测试账号：<br><img src="http://upload-images.jianshu.io/upload_images/5343805-c6400ba5740ad959.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><img src="http://upload-images.jianshu.io/upload_images/5343805-e55f2cc1cef0ad40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h4 id="公众平台测试账号相关设置"><a href="#公众平台测试账号相关设置" class="headerlink" title="公众平台测试账号相关设置"></a>公众平台测试账号相关设置</h4><ol>
+<li><p>测试账号信息<br>appID（应用 ID）、appsecret（应用秘钥）<br><img src="http://upload-images.jianshu.io/upload_images/5343805-d5dc7bbc1050ac0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+</li>
+<li><p>接口配置<br>URL： 填写自己的服务器地址，<strong>注意结尾一定要加上“/msg”</strong>。<br>关于服务器资源的获取，可以用 ngrok 来将自己本地的 tomcat 接口映射为 80 端口：<br><a href="http://www.cnblogs.com/zyw-205520/p/4733062.html" target="_blank" rel="external">让微信公众平台通过80端口访问本机</a><br>Token： 自定义<br><img src="http://upload-images.jianshu.io/upload_images/5343805-61056e30d665d56b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
+</li>
+<li><p>JS 接口安全域名<br>填写服务器域名，<strong>开头不需要加上“ http:// ”</strong>。<br><img src="http://upload-images.jianshu.io/upload_images/5343805-3e11ef73ba57dfd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
+</li>
+</ol>
+<p>到此为止，最基础的配置就已经做好了，可以进行下一步的工作。  </p>
+<hr>
+<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/fbf80b794c65" target="_blank" rel="external">JFinal Weixin 学习笔记（3）– Eclipse 搭建项目框架</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a>    </p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://www.baidu.com/link?url=DmdinFOZnfkROj6jj0xrJI-4d67eguNmo9J6XTqfnolcWwzr-8sFam7KQ_rDGHz9s1Xlt9_G-TmwftIXoQo90K&amp;wd=&amp;eqid=c1d1a0a50006354f00000005591bacff" target="_blank" rel="external">微信公众平台测试帐号的注册与使用 - 人生无赖 - 博客园</a><br><a href="http://www.jianshu.com/p/a87d4b9f9424" target="_blank" rel="external">微信公众号开发之成为开发者模式</a><br><a href="https://mp.weixin.qq.com/wiki" target="_blank" rel="external">微信公众平台技术文档 </a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（1）-- 目录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -535,7 +663,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
