@@ -253,6 +253,217 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/03/在 Node.js 中处理数据 IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/03/在 Node.js 中处理数据 IO/" itemprop="url">在 Node.js 中处理数据 I/O</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-03T20:31:00+08:00">
+                2017-07-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="5-1-处理-JSON"><a href="#5-1-处理-JSON" class="headerlink" title="5.1 处理 JSON"></a>5.1 处理 JSON</h2><h3 id="把-JSON-转换成-JavaScript-对象"><a href="#把-JSON-转换成-JavaScript-对象" class="headerlink" title="把 JSON 转换成 JavaScript 对象"></a>把 JSON 转换成 JavaScript 对象</h3><p>例如，下面的代码片段中，注意 accountStr 被定义为一个格式化的 JSON 字符串，然后使用 JSON.parse() 将其转换为<br>JavaScript 对象，之后其成员属性就可以通过点符号来访问：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var accountStr = &apos;&#123;&quot;name&quot;:&quot;Jedi&quot;, &quot;members&quot;:[&quot;Yoda&quot;,&quot;Obi Wan&quot;], \</div><div class="line">				   &quot;number&quot;:34512, &quot;location&quot;: &quot;A galaxy far, far away&quot;&#125;&apos;;</div><div class="line">var accountObj = JSON.parse(accountStr);</div><div class="line">console.log(accountObj.name);</div><div class="line">console.log(accountObj.members);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ node other.js</div><div class="line">Jedi</div><div class="line">[ &apos;Yoda&apos;, &apos;Obi Wan&apos; ]</div></pre></td></tr></table></figure></p>
+<h3 id="5-1-2-把-JavaScript-对象转化为-JSON-对象"><a href="#5-1-2-把-JavaScript-对象转化为-JSON-对象" class="headerlink" title="5.1.2 把 JavaScript 对象转化为 JSON 对象"></a>5.1.2 把 JavaScript 对象转化为 JSON 对象</h3><p>下面定义了一个包括字符串、数字和数组属性的 JavaScript 对象。JSON.stringify() 将其转换成 JSON 字符串：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var accountObj = &#123;</div><div class="line">	name: &quot;Baggins&quot;,</div><div class="line">	number: 10645,</div><div class="line">	numbers: [&quot;Frodo, Bilbo&quot;],</div><div class="line">	location: &quot;Shire&quot;</div><div class="line">&#125;;</div><div class="line">var accountStr = JSON.stringify(accountObj);</div><div class="line">console.log(accountStr);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><code>{&quot;name&quot;:&quot;Baggins&quot;,&quot;number&quot;:10645,&quot;numbers&quot;:[&quot;Frodo, Bilbo&quot;],&quot;location&quot;:&quot;Shire&quot;}</code>  </p>
+<h2 id="5-2-使用-Buffer-模块缓冲数据"><a href="#5-2-使用-Buffer-模块缓冲数据" class="headerlink" title="5.2 使用 Buffer 模块缓冲数据"></a>5.2 使用 Buffer 模块缓冲数据</h2><h3 id="5-2-2-创建缓冲区"><a href="#5-2-2-创建缓冲区" class="headerlink" title="5.2.2 创建缓冲区"></a>5.2.2 创建缓冲区</h3><p>Buffer 对象实际上是原始的内存分配区。因此，必须在创建时确定其大小。创建 3 种方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">new Buffer(sizeInBytes)</div><div class="line">new Buffer(octetArray)</div><div class="line">new Buffer(string, [encodeing])</div></pre></td></tr></table></figure></p>
+<p>例如，下面分别使用字节大小、一个八位字节的缓冲区，以及一个 UTF8 字符串来设定缓冲区：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var buf256 = new Buffer(256);</div><div class="line">var bufOctets = new Buffer([0x6f, 0x63, 0x74, 0x65, 0x74, 0x73]);</div><div class="line">var bufUTF8 = new Buffer(&quot;Some UTF Text \uoob6 \u30c6 \u20ac&quot;, &apos;utf8&apos;);</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-3-写入缓冲区"><a href="#5-2-3-写入缓冲区" class="headerlink" title="5.2.3 写入缓冲区"></a>5.2.3 写入缓冲区</h3><p> 下面代码定义了一个缓冲区，以零填充。write() 方法在开头写一些文字，write(string, offset, length) 写额外的文本<br> 改变现有缓冲区的一部分。通过直接设置索引的值增加 + 到结束处。注意，buf256.write(“more text”, 9, 9) 语句写到<br> 缓冲区的中间，而 buf256[18] = 43 修改一个字节。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">// buffer_write.js：用各种方式来写入 Buffer 对象</div><div class="line">buf256 = new Buffer(256);</div><div class="line">buf256.fill(0);</div><div class="line">buf256.write(&quot;add some text&quot;);</div><div class="line">console.log(buf256.toString());</div><div class="line">buf256.write(&quot;more text&quot;, 9, 9);</div><div class="line">console.log(buf256.toString());</div><div class="line">buf256[18] = 43;</div><div class="line">console.log(buf256.toString());</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$ node buffer_write.js</div><div class="line">add some text</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">add some more text</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">add some more text+</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-4-从缓冲区读取"><a href="#5-2-4-从缓冲区读取" class="headerlink" title="5.2.4 从缓冲区读取"></a>5.2.4 从缓冲区读取</h3><p>最简单使用 toString() 方法将缓冲区的全部或一部分转换为字符串。也可以直接在缓冲区访问特定的索引，或使用 read()。<br>此外，Node.js 提供 StringDecoder 对象，它有 write(buffer) 方法来进行解码，并使用指定的编码写入缓冲区数据。<br>一下代码定义了 UTF8 编码的字符缓冲区，然后使用不带参数的 toString() 读取所有的缓冲区，之后用 encoding、start<br>和 end 参数读取缓冲区的一部分。然后使用 UTF8 编码创建 StringDecoder，并用它来把缓冲区的内容输出到控制台，<br>接下来，直接访问方法获取在索引 18 处的八进制字节值，用 readUInt32BE() 读取一个 32 位整数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">// buffer_read.js： 从 Buffer 对象读取数据的各种方法</div><div class="line">bufUTF8 = new Buffer(&quot;Some UTF8 Text \u00b6 \u30c6 \u20ac&quot;, &apos;utf8&apos;);</div><div class="line">console.log(bufUTF8.toString());</div><div class="line">console.log(bufUTF8.toString(&apos;utf8&apos;, 5, 9));</div><div class="line">var StringDecoder = require(&apos;string_decoder&apos;).StringDecoder;</div><div class="line">var decoder = new StringDecoder(&apos;utf8&apos;);</div><div class="line">console.log(decoder.write(bufUTF8));</div><div class="line">console.log(bufUTF8[18].toString(16));</div><div class="line">console.log(bufUTF8.readUInt32BE(18).toString(16));</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ node buffer_read.js</div><div class="line">Some UTF8 Text ¶ テ €</div><div class="line">UTF8</div><div class="line">Some UTF8 Text ¶ テ €</div><div class="line">e3</div><div class="line">e3838620</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-5-确定缓冲区长度"><a href="#5-2-5-确定缓冲区长度" class="headerlink" title="5.2.5 确定缓冲区长度"></a>5.2.5 确定缓冲区长度</h3><p>缓冲区处理的一项常见任务是确定其长度，尤其是当你从一个字符串动态创建一个缓冲区的时候。你可以通过在 Buffer 对象上<br>调用 .length 来确定缓冲区的长度。确定字符串将在缓冲区中占用的字节长度，不能使用 .length 属性，而是用<br>Buffer.byteLength(string, [encoding])。注意，缓冲区中字符串长度和字节长度直接的区别很重要，以下语句可以说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">“UTF8 text \u00b6&quot;.length;</div><div class="line">// 计算结果是 11</div><div class="line">BUffer.byteLength(&quot;UTF8 text \u00b6&quot;, &apos;utf8&apos;);</div><div class="line">// 计算结果是 12，因为它包含双字节字符</div><div class="line">Buffer(&quot;UTF8 text \u00b6&quot;).length;</div><div class="line">// 计算结果是 12，缓冲区上的 .length 返回的是字节长度</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-6-复制缓冲区"><a href="#5-2-6-复制缓冲区" class="headerlink" title="5.2.6 复制缓冲区"></a>5.2.6 复制缓冲区</h3><p>Node.js 为 Buffer 对象提供 copy(targetBuffer, [targetStart], [sourceStart], [sourceIndex]) 函数。<br>targetBuffer 参数是另一个 Buffer 对象， targetStart、sourceStart 和 sourceEnd 是源和目标缓冲区内的索引。  </p>
+<blockquote>
+<p><strong>注意</strong><br>若要从一个缓冲区复制字符串数据到另一个缓冲区，应确保两个缓冲区使用相同的编码；否则，对结果缓冲区解码时，<br>可能得到意想不到的结果。  </p>
+</blockquote>
+<p>也可以通过直接索引将一个缓冲区中的数据复制到另一个缓冲区，例如：<br><code>sourceBuffer[index] = destinationBuffer[index]</code>  </p>
+<p>下面代码说明了将一个缓冲区的数据复制到另一个缓冲区的 3 个例子。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">var alphabet = new Buffer(&apos;abcdefghijklmnopqrstuvwxyz&apos;);</div><div class="line">console.log(alphabet.toString());</div><div class="line">// copy full buffer </div><div class="line">var blank = new Buffer(26);</div><div class="line">blank.fill();</div><div class="line">console.log(&quot;Blank: &quot; + blank.toString());</div><div class="line">alphabet.copy(blank);</div><div class="line">console.log(&quot;Blank: &quot; + blank.toString());</div><div class="line">// copy part of buffer</div><div class="line">var dashes = new Buffer(26);</div><div class="line">dashes.fill(&apos;-&apos;);</div><div class="line">console.log(&quot;Dashes: &quot; + dashes.toString());</div><div class="line">alphabet.copy(dashes, 10, 10, 15);</div><div class="line">console.log(&quot;Dashes: &quot; + dashes.toString());</div><div class="line">// copy to and from direct indexes of buffers</div><div class="line">var dots = new Buffer(&apos;----------------------------&apos;);</div><div class="line">dots.fill(&apos;.&apos;);</div><div class="line">console.log(&quot;dots: &quot; + dots.toString());</div><div class="line">for (var i = 0; i &lt; dots.length; i++) &#123;</div><div class="line">	if (i % 2) &#123;</div><div class="line">		dots[i] = alphabet[i];</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">console.log(&quot;dots: &quot; + dots.toString());</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ node buffer_copy.js</div><div class="line">abcdefghijklmnopqrstuvwxyz</div><div class="line">Blank:</div><div class="line">Blank: abcdefghijklmnopqrstuvwxyz</div><div class="line">Dashes: --------------------------</div><div class="line">Dashes: ----------klmno-----------</div><div class="line">dots: ............................</div><div class="line">dots: .b.d.f.h.j.l.n.p.r.t.v.x.z.</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-7-对缓冲区切片"><a href="#5-2-7-对缓冲区切片" class="headerlink" title="5.2.7 对缓冲区切片"></a>5.2.7 对缓冲区切片</h3><p><strong>切片（slice）</strong> 是缓冲区的开始索引能和结束索引之间的部分。对缓冲区切片可以让你操作一个特定的快。<br>可以使用 slice([start], [end]) 创建切片，它返回一个 Buffer 对象，其指向原缓冲区的 start 索引，并具有<br>end - start 的长度。请记住，切片与副本不同。编辑副本不影响原缓冲区，<strong>编辑切片，会改变原缓冲区</strong>。<br>示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 创建和操作一个 Buffer 对象的切片</div><div class="line">var numbers = new Buffer(&quot;123456789&quot;);</div><div class="line">console.log(numbers.toString());</div><div class="line">var slice = numbers.slice(3, 6);</div><div class="line">console.log(slice.toString());</div><div class="line">slice[0] = &apos;#&apos;.charCodeAt(0);</div><div class="line">console.log(slice.toString());</div><div class="line">console.log(numbers.toString());</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node buffer_slice.js</div><div class="line">123456789</div><div class="line">456</div><div class="line">#56</div><div class="line">123#56789</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-8-拼接缓冲区"><a href="#5-2-8-拼接缓冲区" class="headerlink" title="5.2.8 拼接缓冲区"></a>5.2.8 拼接缓冲区</h3><p>可以把两个或多个 Buffer 对象拼接在一起，形成一个新的缓冲区。concat(list, [totalLength]) 方法接受 Buffer 对象<br>的数组作为第一个参数，并把定义缓冲区最大字节数的 totalLength 作为可选的第二个参数。Buffer 对象按照他们出现在列表<br>中的顺序被拼接，一个新的 Buffer 对象被返回，它包含至多 totalLength 字节的原始缓冲区的内容。<br>如果不提供 totalLength 参数，concat() 就计算出总长度。但是，这样它必须遍历列表，所以提供 totalLength 执行得更快<br>一点。<br>一下代码线拼接基 Buffer 对象和一个缓冲区，然后再拼接另一个缓冲区。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// 拼接 Buffer 字符串</div><div class="line">var af = new Buffer(&quot;African Swallow?&quot;);</div><div class="line">var eu = new Buffer(&quot;European Swallow?&quot;);</div><div class="line">var question = new Buffer(&quot;Air Speed Velocity of an &quot;);</div><div class="line">console.log(Buffer.concat([question, af]).toString());</div><div class="line">console.log(Buffer.concat([question, eu]).toString());</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ node buffer_concat.js</div><div class="line">Air Speed Velocity of an African Swallow?</div><div class="line">Air Speed Velocity of an European Swallow?</div></pre></td></tr></table></figure></p>
+<h2 id="5-3-使用-Stream-模块来传递数据"><a href="#5-3-使用-Stream-模块来传递数据" class="headerlink" title="5.3 使用 Stream 模块来传递数据"></a>5.3 使用 Stream 模块来传递数据</h2><p>数据流是可读，可写，或既可读又可写的内存结构。<br>流的目的是提供一种从一个地方向另一个地方传送数据的通用机制。它们还公开各种事件，如数据可被读取时的 data，当<br>错误发生时的 error 等等，这样可以注册监听器来在流变为可用或已准备好被写入时处理数据。<br>流一般用于 HTTP 数据和文件。可以作为读取流，打开文件，或者从 HTTP 请求访问数据，并读出所需的字节。  </p>
+<h3 id="5-3-1-Readable-流"><a href="#5-3-1-Readable-流" class="headerlink" title="5.3.1 Readable 流"></a>5.3.1 Readable 流</h3><p>Readable 流旨在提供一种机制，以方便地读取从其他来源进入应用程序的数据。<br>常见实例：  </p>
+<ul>
+<li>在客户端的 HTTP 响应</li>
+<li>在服务器的 HTTP 请求</li>
+<li>fs 读取流</li>
+<li>zlib 流</li>
+<li>TCP 套接字</li>
+<li>子进程的 stdout 和 stderr</li>
+<li>process.stdin</li>
+</ul>
+<p>Readable 流提供 read([size]) 方法来读取数据，size 指定从流中读取的字节数。read() 可以返回一个 String 对象、<br>Buffer 对象或 null。Readable 流也公开了以下事件：  </p>
+<ul>
+<li>readable：在数据块可以从流中读取的时候发出。</li>
+<li>data：类似于 readable，不同之处在于，当数据的事件处理程序被连接时，流转变成流动的模式，并且数据处理程序被<br>连续地调用，直到所有数据都被用尽。</li>
+<li>end：当数据将不再被提供时由流发出。</li>
+<li>close：当底层的资源，如文件，已关闭时发出。</li>
+<li>error：当在接收数据中出现错误时发出。</li>
+</ul>
+<p>Readable 对象也提供了许多函数： </p>
+<ul>
+<li>read([size])：从流中读取数据。这些数据可以是 String、Buffer 或者 null （null 表示没有剩下任何更多的数据）。<br>如果指定 size 参数，那么被读取的数据将仅限于那个字节数。</li>
+<li>setEncoding(encoding)：设置从 read() 请求读取返回 String 时使用的编码。</li>
+<li>pause()：暂停从该对象发出的 data 事件。</li>
+<li>resume()：恢复从该对象发出的 data 事件。</li>
+<li>pipe(destination, [options])：把这个流的输出传输到 destination（目的地）指定的 Writable 流对象。options 是<br>一个 JavaScript 对象。例如，{end:true} 当 Readable 结束时就结束 Writable 目的地。</li>
+<li>unpipe([destination])：从 Writable 目的地断开这一对象。</li>
+</ul>
+<p>为了实现自定义 Readable 流对象，需要首先继承 Readable 流的功能。最简单的方法是使用 util 模块的 inherits() 方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(MyReadableStream, stream.Readable);</div></pre></td></tr></table></figure></p>
+<p>然后创建对象调用的实例：<br><code>stream.Readable.call(this, opt);</code><br>还需要实现一个调用 push() 来输出 Readable 对象中的数据的 _read() 方法。push() 调用应推入的是一个 String、<br>Buffer 或者 null。<br>下面实现了一个 Readable 流，并从中读取数据。注意，Answers() 类继承自 Readable，然后实现了<br>Answers.prototype._read() 函数来处理数据的推出。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">// 实现一个 Readable 流对象</div><div class="line">var stream = require(&apos;stream&apos;);</div><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(Answers, stream.Readable);</div><div class="line">function Answers(opt) &#123;</div><div class="line">	stream.Readable.call(this, opt);</div><div class="line">	this.quotes = [&quot;yes&quot;, &quot;no&quot;, &quot;maybe&quot;];</div><div class="line">	this._index = 0;</div><div class="line">&#125;</div><div class="line">Answers.prototype._read = function() &#123;</div><div class="line">	if (this._index &gt; this.quotes.length) &#123;</div><div class="line">		this.push(null);</div><div class="line">	&#125; else &#123;</div><div class="line">		this.push(this.quotes[this._index]);</div><div class="line">		this._index += 1;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">var r = new Answers();</div><div class="line">// 直接 read() 调用从流中读取第一个条目</div><div class="line">console.log(&quot;Direct read: &quot; + r.read().toString());</div><div class="line">// 数据处理程序读取其余条目</div><div class="line">r.on(&apos;data&apos;, function(data)&#123;</div><div class="line">	console.log(&quot;Callback read: &quot; + data.toString());</div><div class="line">&#125;);</div><div class="line">r.on(&apos;end&apos;, function(data)&#123;</div><div class="line">	console.log(&quot;No more answers.&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node stream_read.js</div><div class="line">Direct read: yes</div><div class="line">Callback read: no</div><div class="line">Callback read: maybe</div><div class="line">No more answers.</div></pre></td></tr></table></figure></p>
+<h3 id="5-3-2-Writable-流"><a href="#5-3-2-Writable-流" class="headerlink" title="5.3.2 Writable 流"></a>5.3.2 Writable 流</h3><p>Writable 流旨在提供把数据写入一种可以轻松地在代码的另一个区域被使用的形式的机制。<br>Writable 流的常见实例：  </p>
+<ul>
+<li>在客户端的 HTTP 请求</li>
+<li>在服务器的 HTTP 响应</li>
+<li>fs 写入刘</li>
+<li>zlib 流</li>
+<li>TCP 套接字</li>
+<li>子进程的 stdin</li>
+<li>process.stdout 和 process.stderr</li>
+</ul>
+<p>Writable 流提供 write(chunk, [encoding], [callback]) 方法来将数据写入流中。其中，chunk（数据块）中包含要<br>写入的数据；encoding 指定字符串的编码；callback 指定当数据已经完全刷新时执行的一个回调函数。如果数据被成功写入，<br>则 write() 函数返回 true。<br>Writable 公开了以下事件：  </p>
+<ul>
+<li>drain：在 write() 调用返回 false 后，当准备好开始写更多的数据时，发出此事件通知监听器。</li>
+<li>finish：当 end() 在 Writable 对象上被调用，所有的数据都被刷新，并且不会有更多的数据将被接收时发出此事件。</li>
+<li>pipe：当 pipe() 方法在 Readable 流上被调用，以添加此 Writable 为目的地时，发出此事件。</li>
+<li>unpipe： 当 unpipe() 方法在 Readable 流上被调用，以删除此 Writable 为目的地时，发出此事件。</li>
+</ul>
+<p>可用的 Writable 流对象的方法：  </p>
+<ul>
+<li>write(chunk, [encoding], [callback])：将数据块写入流对象的数据位置。该数据可以是字符串或缓冲区。如果<br>指定 encoding，那么将其用于对字符串数据的编码。如果指定 callback，那么它在数据已被刷新后调用。</li>
+<li>end([chunk], [encoding], [callback])：与 write() 相同，但是它把 Writable 对象置于不再接收数据的状态，<br>并发送 finish 事件。</li>
+</ul>
+<p>实现自定义 Writable 流对象，首先继承 Writable 流的功能，使用 util模块的 inherits() 方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(MyWritableStream, stream.Writable);</div></pre></td></tr></table></figure></p>
+<p>创建对象调用的实例：<br><code>stream.Writable.call(this, opt);</code><br>还需实现一个 _write(data, encoding, callback) 方法存储 Writable 对象的数据。<br>下面代码说明了实现和写入 Writable 流的基本知识：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// 实现一个 Writable 流对象</div><div class="line">var stream = require(&apos;stream&apos;);</div><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(Writer, stream.Writable);</div><div class="line">function Writer(opt) &#123;</div><div class="line">	stream.Writable.call(this, opt);</div><div class="line">	this.data = new Array();</div><div class="line">&#125;</div><div class="line">Writer.prototype._write = function(data, encoding, callback) &#123;</div><div class="line">	this.data.push(data.toString(&apos;utf8&apos;));</div><div class="line">	console.log(&quot;Adding: &quot; + data);</div><div class="line">	callback();</div><div class="line">&#125;;</div><div class="line">var w = new Writer();</div><div class="line">for (var i = 1; i &lt;= 5; i++) &#123;</div><div class="line">	w.write(&quot;Item&quot; + i, &apos;utf8&apos;);</div><div class="line">&#125;</div><div class="line">w.end(&quot;ItemLast&quot;);</div><div class="line">console.log(w.data);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ node stream_write.js</div><div class="line">Adding: Item1</div><div class="line">Adding: Item2</div><div class="line">Adding: Item3</div><div class="line">Adding: Item4</div><div class="line">Adding: Item5</div><div class="line">Adding: ItemLast</div><div class="line">[ &apos;Item1&apos;, &apos;Item2&apos;, &apos;Item3&apos;, &apos;Item4&apos;, &apos;Item5&apos;, &apos;ItemLast&apos; ]</div></pre></td></tr></table></figure></p>
+<h3 id="5-3-3-Duplex-流"><a href="#5-3-3-Duplex-流" class="headerlink" title="5.3.3 Duplex 流"></a>5.3.3 Duplex 流</h3><p>Duplex（双向）流是结合可读写功能的流。Duplex 流的很好地例子是 TCP 套接字连接。可在创建套接字后读取和写入它。<br>实现自定义 Duplex 流对象，首先继承 Duplex 流的功能，使用 util 模块的 inherits() 方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(MuDuplexStream, stream.Duplex);</div></pre></td></tr></table></figure></p>
+<p>然后创建对象调用实例：<br><code>stream.Duplex.call(this, opt);</code><br>创建一个 Duplex 流的 opt 参数接受一个 allowHalfOpen 数次那个设置为 true 或 false 的对象。true：即使可写入端<br>已经结束，可读取端也保持打开状态，反之亦然。false：结束可写入端也会结束可读取端，反之亦然。<br>当实现一个全 Duplex 流时，在原型化 Duplex 类的时候需要同时实现 _read(size) 和 _write(data, encoding, callback)<br>方法。<br>下面代码实现、写入、读取 Duplex 流。Duplex() 类继承自 Duplex 流，并实现了基本的 _write() 函数来将数据存储在该<br>对象中的数组内。_read() 函数使用 shift() 来获得此数组的第一个条目，如果等于“stop”，那么推入 null；如果有值，<br>那么推入它；或者如果没有值，则设置超时时间定时器来回调到 _read() 函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">// 实现 Duplex 流对象</div><div class="line">var stream = require(&apos;stream&apos;);</div><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(Duplexer, stream.Duplex);</div><div class="line">function Duplexer(opt) &#123;</div><div class="line">	stream.Duplex.call(this, opt);</div><div class="line">	this.data = [];</div><div class="line">&#125;</div><div class="line">Duplexer.prototype._read = function readItem(size) &#123;</div><div class="line">	var chunk = this.data.shift();</div><div class="line">	if (chunk == &quot;stop&quot;) &#123;</div><div class="line">		this.push(null);</div><div class="line">	&#125; else &#123;</div><div class="line">		if (chunk) &#123;</div><div class="line">			this.push(chunk);</div><div class="line">		&#125; else &#123;</div><div class="line">			setTimeout(readItem.bind(this), 500, size);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line">Duplexer.prototype._write = function(data, encoding, callback) &#123;</div><div class="line">	this.data.push(data);</div><div class="line">	callback();</div><div class="line">&#125;;</div><div class="line">var d = new Duplexer();</div><div class="line">d.on(&apos;data&apos;, function(chunk)&#123;</div><div class="line">	console.log(&apos;read: &apos;, chunk.toString());</div><div class="line">&#125;);</div><div class="line">d.on(&apos;end&apos;, function()&#123;</div><div class="line">	console.log(&apos;Message Complete&apos;);</div><div class="line">&#125;);</div><div class="line">d.write(&quot;I think, &quot;);</div><div class="line">d.write(&quot;therefore &quot;);</div><div class="line">d.write(&quot;I am.&quot;);</div><div class="line">d.write(&quot;Rene Descartes&quot;);</div><div class="line">d.write(&quot;stop&quot;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ node stream_duplex.js</div><div class="line">read:  I think,</div><div class="line">read:  therefore</div><div class="line">read:  I am.</div><div class="line">read:  Rene Descartes</div><div class="line">Message Complete</div></pre></td></tr></table></figure></p>
+<h3 id="5-3-4-Transform-流"><a href="#5-3-4-Transform-流" class="headerlink" title="5.3.4 Transform 流"></a>5.3.4 Transform 流</h3><p>Transform（变换）流扩展了 Duplex 流，但它修改 Writable 流和 Readable 流之间的数据。当需要修改从一个系统到<br>另一个系统的数据时，此类型会非常有用。<br>实例：  </p>
+<ul>
+<li>zlib 流</li>
+<li>crypto 流</li>
+</ul>
+<p>Duplex 和 Transform 流区别：Transform 流不用实现 _read() 和 _write() 原型方法。这些被作为直通函数提供。但是<br>需要实现 _transform(chunk, encoding, callback) 和 _flush(callback) 方法。此 _transform() 方法应该接受来自<br>write() 请求的数据，对其修改，并推出修改后的数据。  </p>
+<p>以下代码，实现 Transform 流，这个流接受 JSON 字符串，将它们转换为对象，然后发出发送对象的名为 object 的自定义<br>事件给所有监听器。该 _transform() 函数也修改对象来包括一个 handled 属性，然后以字符串形式发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">// 实现 Transform 流对象</div><div class="line">var stream = require(&apos;stream&apos;);</div><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(JSONObjectStream, stream.Transform);</div><div class="line">function JSONObjectStream(opt) &#123;</div><div class="line">	stream.Transform.call(this, opt);</div><div class="line">&#125;</div><div class="line">JSONObjectStream.prototype._transform = function(data, encoding, callback) &#123;</div><div class="line">	object = data ? JSON.parse(data.toString()) : &quot;&quot;;</div><div class="line">	this.emit(&quot;object&quot;, object);</div><div class="line">	object.handled = true;</div><div class="line">	this.push(JSON.stringify(object));</div><div class="line">	callback();</div><div class="line">&#125;;</div><div class="line">JSONObjectStream.prototype._flush = function(cb) &#123;</div><div class="line">	cb();</div><div class="line">&#125;;</div><div class="line">var tc = new JSONObjectStream();</div><div class="line">tc.on(&quot;object&quot;, function() &#123;</div><div class="line">	console.log(&quot;Name: %s&quot;, object.name);</div><div class="line">	console.log(&quot;Color: %s&quot;, object.color);</div><div class="line">&#125;);</div><div class="line">tc.on(&quot;data&quot;, function(data) &#123;</div><div class="line">	console.log(&quot;Data: %s&quot;, data.toString());</div><div class="line">&#125;);</div><div class="line">tc.write(&apos;&#123;&quot;name&quot;:&quot;Carolinus&quot;, &quot;color&quot;: &quot;Green&quot;&#125;&apos;);</div><div class="line">tc.write(&apos;&#123;&quot;name&quot;:&quot;Solarius&quot;, &quot;color&quot;: &quot;Blue&quot;&#125;&apos;);</div><div class="line">tc.write(&apos;&#123;&quot;name&quot;:&quot;Lo Tae Zhao&quot;, &quot;color&quot;: &quot;Gold&quot;&#125;&apos;);</div><div class="line">tc.write(&apos;&#123;&quot;name&quot;:&quot;Ommadon&quot;, &quot;color&quot;: &quot;Red&quot;&#125;&apos;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ node stream_transform.js</div><div class="line">Name: Carolinus</div><div class="line">Color: Green</div><div class="line">Data: &#123;&quot;name&quot;:&quot;Carolinus&quot;,&quot;color&quot;:&quot;Green&quot;,&quot;handled&quot;:true&#125;</div><div class="line">Name: Solarius</div><div class="line">Color: Blue</div><div class="line">Data: &#123;&quot;name&quot;:&quot;Solarius&quot;,&quot;color&quot;:&quot;Blue&quot;,&quot;handled&quot;:true&#125;</div><div class="line">Name: Lo Tae Zhao</div><div class="line">Color: Gold</div><div class="line">Data: &#123;&quot;name&quot;:&quot;Lo Tae Zhao&quot;,&quot;color&quot;:&quot;Gold&quot;,&quot;handled&quot;:true&#125;</div><div class="line">Name: Ommadon</div><div class="line">Color: Red</div><div class="line">Data: &#123;&quot;name&quot;:&quot;Ommadon&quot;,&quot;color&quot;:&quot;Red&quot;,&quot;handled&quot;:true&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="5-3-5-把-Readable-流用管道输送到-Writable-流"><a href="#5-3-5-把-Readable-流用管道输送到-Writable-流" class="headerlink" title="5.3.5 把 Readable 流用管道输送到 Writable 流"></a>5.3.5 把 Readable 流用管道输送到 Writable 流</h3><p>通过 pipe(writableStream, [options]) 函数把 Readable 流的输出直接输入到 Writable 流。options 参数接受一个<br>end 属性为 true 或 false 的对象。true：Writable 流随着 Readable 流的结束而结束。这是默认行为。例如：<br><code>readStream.pipe(writeStream, {end:true});</code><br>可以使用 unpipe(destinationStream) 选项来打破管道。<br>下面代码实现了一个 Readable 流和 Writable 流，然后使用 pipe() 函数把它们链接在一起。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">// 把 Readable 流传送到 Writable 流</div><div class="line">var stream = require(&apos;stream&apos;);</div><div class="line">var util = require(&apos;util&apos;);</div><div class="line">util.inherits(Reader, stream.Readable);</div><div class="line">util.inherits(Writer, stream.Writable);</div><div class="line">function Reader(opt) &#123;</div><div class="line">	stream.Readable.call(this, opt);</div><div class="line">	this._index = 1;</div><div class="line">&#125;</div><div class="line">Reader.prototype._read = function(size) &#123;</div><div class="line">	var i = this._index++;</div><div class="line">	if (i &gt; 10) &#123;</div><div class="line">		this.push(null);</div><div class="line">	&#125; else &#123;</div><div class="line">		this.push(&quot;Item &quot; + i.toString());</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line">function Writer(opt) &#123;</div><div class="line">	stream.Writable.call(this, opt);</div><div class="line">	this._index = 1;</div><div class="line">&#125;</div><div class="line">Writer.prototype._write = function(data, encoding, callback) &#123;</div><div class="line">	console.log(data.toString());</div><div class="line">	callback();</div><div class="line">&#125;;</div><div class="line">var r = new Reader();</div><div class="line">var w = new Writer();</div><div class="line">r.pipe(w);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ node stream_piped.js</div><div class="line">Item 1</div><div class="line">Item 2</div><div class="line">Item 3</div><div class="line">Item 4</div><div class="line">Item 5</div><div class="line">Item 6</div><div class="line">Item 7</div><div class="line">Item 8</div><div class="line">Item 9</div><div class="line">Item 10</div></pre></td></tr></table></figure></p>
+<h2 id="5-4-用-Zlib-压缩与解压缩数据"><a href="#5-4-用-Zlib-压缩与解压缩数据" class="headerlink" title="5.4 用 Zlib 压缩与解压缩数据"></a>5.4 用 Zlib 压缩与解压缩数据</h2><p>在使用大的系统或移动大量数据时，压缩/解压缩数据的能力极为有用。<br>记住，压缩数据需要花费 CPU 周期，所以在招致压缩/解压缩成本之前，应该确信压缩数据会带来好处。<br>Zlib 支持如下压缩方法：  </p>
+<ul>
+<li>gzip/gunzip：标准 gzip 压缩。</li>
+<li>deflate/inflate：基于 Huffman 编码的标准 deflate 压缩算法。</li>
+<li>deflateRaw/inflateRaw：针对原始缓冲区的 deflate 压缩算法。</li>
+</ul>
+<h3 id="5-4-1-压缩和解压缩缓冲区"><a href="#5-4-1-压缩和解压缩缓冲区" class="headerlink" title="5.4.1 压缩和解压缩缓冲区"></a>5.4.1 压缩和解压缩缓冲区</h3><p>Zlib 模块提供了几个辅助含税，基本格式 function(buffer, callback)，其中 buffer 是被压缩/解压缩的缓冲区，<br>callback 是压缩/解压缩发生之后所执行的回调函数。<br>以下几种示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">// 使用 Zlib 模块压缩/解压缩缓冲区</div><div class="line">var zlib = require(&apos;zlib&apos;);</div><div class="line">var input = &apos;..................text................&apos;;</div><div class="line">zlib.deflate(input, function(err, buffer) &#123;</div><div class="line">	if (!err) &#123;</div><div class="line">		console.log(&quot;deflate (%s): &quot;, buffer.length, buffer.toString(&apos;base64&apos;));</div><div class="line">		zlib.inflate(buffer, function(err, buffer) &#123;</div><div class="line">			if (!err) &#123;</div><div class="line">				console.log(&quot;inflate (%s): &quot;, buffer.length, buffer.toString());</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		zlib.unzip(buffer, function(err, buffer) &#123;</div><div class="line">			if (!err) &#123;</div><div class="line">				console.log(&quot;unzip deflate (%s): &quot;, buffer.length, buffer.toString());</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">zlib.deflateRaw(input, function(err, buffer) &#123;</div><div class="line">	if (!err) &#123;</div><div class="line">		console.log(&quot;deflateRaw (%s): &quot;, buffer.length, buffer.toString(&apos;base64&apos;));</div><div class="line">		zlib.inflateRaw(buffer, function(err, buffer) &#123;</div><div class="line">			if (!err) &#123;</div><div class="line">				console.log(&quot;inflateRaw (%s): &quot;, buffer.length, buffer.toString());</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">zlib.gzip(input, function(err, buffer) &#123;</div><div class="line">	if (!err) &#123;</div><div class="line">		console.log(&quot;gzip (%s): &quot;, buffer.length, buffer.toString(&apos;base64&apos;));</div><div class="line">		zlib.gunzip(buffer, function(err, buffer) &#123;</div><div class="line">			if (!err) &#123;</div><div class="line">				console.log(&quot;gunzip (%s): &quot;, buffer.length, buffer.toString());</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		zlib.unzip(buffer, function(err, buffer) &#123;</div><div class="line">			if (!err) &#123;</div><div class="line">				console.log(&quot;unzip gzip (%s): &quot;, buffer.length, buffer.toString());</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">	&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ node zlib_buffers.js</div><div class="line">deflate (17):  eJzT00MHJakVJehiAJizB+I=</div><div class="line">deflateRaw (11):  09NDByWpFSXoYgA=</div><div class="line">gzip (29):  H4sIAAAAAAAACtPTQwclqRUl6GIAandyAiYAAAA=</div><div class="line">inflate (38):  ..................text................</div><div class="line">unzip deflate (38):  ..................text................</div><div class="line">inflateRaw (38):  ..................text................</div><div class="line">gunzip (38):  ..................text................</div><div class="line">unzip gzip (38):  ..................text................</div></pre></td></tr></table></figure></p>
+<h3 id="5-2-4-压缩-解压缩流"><a href="#5-2-4-压缩-解压缩流" class="headerlink" title="5.2.4 压缩/解压缩流"></a>5.2.4 压缩/解压缩流</h3><p>对流操作使用 pipe() 函数，用过压缩/解压缩对象把数据从一个流输送到另一个流。 适用于把任何 Readable 数据压缩成<br>Writable 流。<br>示例使用 fs.ReadStream 和 fs.WriteStream 压缩文件内容，通过使用 xlib.Gzip() 对象压缩一个文件的内容，然后<br>用 zlib.Gunzip() 对象对它解压缩。注意，在试图解压缩文件，以允许数据被刷新到磁盘之前，有 3 秒的超时时间延迟。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// 使用 Zlib 模块压缩/解压缩文件流</div><div class="line">var zlib = require(&quot;zlib&quot;);</div><div class="line">var gzip = zlib.createGzip();</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var inFile = fs.createReadStream(&apos;zlib_file.js&apos;);</div><div class="line">var outFile = fs.createWriteStream(&apos;zlib_file.gz&apos;);</div><div class="line">inFile.pipe(gzip).pipe(outFile);</div><div class="line">setTimeout(function()&#123;</div><div class="line">	var gunzip = zlib.createUnzip(&#123;flush: zlib.Z_FULL_FLUSH&#125;);</div><div class="line">	var inFile = fs.createReadStream(&apos;zlib_file.gz&apos;);</div><div class="line">	var outFile = fs.createWriteStream(&apos;zlib_file.unzipped&apos;);</div><div class="line">	inFile.pipe(gunzip).pipe(outFile);</div><div class="line">&#125;, 3000);</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/28/在 Node.js 中使用事件、监听器、定时器和回调/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1789,254 +2000,6 @@ public void configRoute(Routes me) {
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/17/JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="NanCarp">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李子园">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/05/17/JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架/" itemprop="url">JFinal Weixin 学习笔记（3）-- Eclipse 搭建微信项目框架</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:13:43+08:00">
-                2017-05-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h4 id="新建-Eclipse-项目"><a href="#新建-Eclipse-项目" class="headerlink" title="新建 Eclipse 项目"></a>新建 Eclipse 项目</h4><p>新建 Dynamic Web Project<br>项目名： jfinal-weixin-nancarp<br>服务器： Tomcat v8.0  </p>
-<p><img src="http://upload-images.jianshu.io/upload_images/5343805-dbcb971fe77773e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
-<h4 id="导入-jar-包"><a href="#导入-jar-包" class="headerlink" title="导入 jar 包"></a>导入 jar 包</h4><p>项目必需以下 jar 包，或者更高版本    </p>
-<pre><code>// jfinal 核心包
---jfinal-2.2.jar
-
-// jfinal 微信开发 jar 包
---jfinal-weixin-1.8-bin-with-src.jar
-
-// 可选Json处理包，必选其一
---fastjson-1.2.6.jar
-//或者
---jackson-databind-2.4.3.jar
-----jackson-annotations-2.4.0.jar
-----jackson-core-2.4.3.jar
-</code></pre><p>所需 jar 包可以在 JFinal 社区下载：<a href="http://www.jfinal.com/" target="_blank" rel="external">http://www.jfinal.com/</a>  </p>
-<h4 id="搭建-JFinal-框架"><a href="#搭建-JFinal-框架" class="headerlink" title="搭建 JFinal 框架"></a>搭建 JFinal 框架</h4><p>项目结构  ：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/5343805-a4b5f842c6e7d478.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
-<p><strong>WeixinConfig.java：</strong>  </p>
-<pre><code>package com.nancarp.config;
-
-import com.jfinal.config.Constants;
-import com.jfinal.config.Handlers;
-import com.jfinal.config.Interceptors;
-import com.jfinal.config.JFinalConfig;
-import com.jfinal.config.Plugins;
-import com.jfinal.config.Routes;
-import com.jfinal.kit.PropKit;
-import com.jfinal.template.Engine;
-import com.nancarp.controller.HelloWorldController;
-
-public class WeixinConfig extends JFinalConfig{
-
-    @Override
-    public void configConstant(Constants me) {
-        // 加载配置文件
-        PropKit.use(&quot;a_little_config.txt&quot;);
-        // 读取配置文件，判断是否为开发模式，默认 false
-        me.setDevMode(PropKit.getBoolean(&quot;devMode&quot;, false));
-    }
-
-    @Override
-    public void configRoute(Routes me) {
-        // HelloWorld 路由
-        me.add(&quot;/hello&quot;,HelloWorldController.class);
-    }
-
-    @Override
-    public void configEngine(Engine me) {
-
-    }
-
-    @Override
-    public void configPlugin(Plugins me) {
-
-    }
-
-    @Override
-    public void configInterceptor(Interceptors me) {
-
-    }
-
-    @Override
-    public void configHandler(Handlers me) {
-
-    }
-
-}
-</code></pre><p><strong>HelloWorldController.java：</strong>  </p>
-<pre><code>package com.nancarp.controller;
-
-import com.jfinal.core.Controller;
-
-public class HelloWorldController extends Controller {
-    public void index() {
-        renderText(&quot;Hello World!&quot;);
-    }
-}
-</code></pre><p><strong>a_little_config.txt：</strong>  </p>
-<pre><code># 数据库相关设置
-jdbcUrl=jdbc:mysql://localhost/__数据库名__?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull
-user=_数据库账号_
-password=_数据库密码_
-
-# 开发模式
-devMode = true
-
-# 微信服务器回调所用的 token
-token=weixin
-
-# 测试用的账号
-appId=wxde758064398fa9bf
-appSecret=89622f356fc2bca96ec647d55929afa5
-#webAppId=___web appid___
-#webAppSecret=_________web appSecret____
-
-#是否对消息进行加密，是否对消息进行加密，对应于微信平台的消息加解密方式，false支持明文模式及兼容模式，true支持安全模式及兼容模式
-encryptMessage=false
-encodingAesKey=5C8csBd4cG4c9039OKDnNaZmYlkAzXV31piXQFRZKHC
-
-#####业务逻辑中的华丽的分割线#########
-#授权域名
-domain=http://********.com
-subscribe_rul=http://mp.weixin.qq.com/s?__biz=MzA4MDA2OTA0Mg==&amp;mid=208184833&amp;idx=1&amp;sn=d9e615e45902c3c72db6c24b65c4af3e#rd
-host=http://*****.com
-</code></pre><p><strong>web.xml：</strong>  </p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot; xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot; id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
-  &lt;filter&gt;
-        &lt;filter-name&gt;jfinal&lt;/filter-name&gt;
-        &lt;filter-class&gt;com.jfinal.core.JFinalFilter&lt;/filter-class&gt;
-        &lt;init-param&gt;
-            &lt;param-name&gt;configClass&lt;/param-name&gt;
-            &lt;param-value&gt;com.nancarp.config.WeixinConfig&lt;/param-value&gt;
-        &lt;/init-param&gt;
-    &lt;/filter&gt;
-
-    &lt;filter-mapping&gt;
-        &lt;filter-name&gt;jfinal&lt;/filter-name&gt;
-        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-    &lt;/filter-mapping&gt;
-&lt;/web-app&gt;  
-</code></pre><h4 id="项目部署到-Tomcat-上"><a href="#项目部署到-Tomcat-上" class="headerlink" title="项目部署到 Tomcat 上"></a>项目部署到 Tomcat 上</h4><p><img src="http://upload-images.jianshu.io/upload_images/5343805-cbee124232eabea5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="">  </p>
-<p>修改 server.xml 文件    </p>
-<pre><code>&lt;Connector connectionTimeout=&quot;20000&quot; port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot; redirectPort=&quot;8443&quot;/&gt;
-// 修改端口号为 80 ，因为微信只支持 80 或 443 端口
-&lt;Connector connectionTimeout=&quot;20000&quot; port=&quot;80&quot; protocol=&quot;HTTP/1.1&quot; redirectPort=&quot;8443&quot;/&gt;
-
-
-&lt;Context docBase=&quot;jfinal-weixin-nancarp&quot; path=&quot;/jfinal-weixin-nancarp&quot; reloadable=&quot;true&quot; source=&quot;org.eclipse.jst.jee.server:jfinal-weixin-nancarp&quot;/&gt;
-// path 修改为&quot;/&quot;，这样 url 就不需要带上项目名
-&lt;Context docBase=&quot;jfinal-weixin-nancarp&quot; path=&quot;/&quot; reloadable=&quot;true&quot; source=&quot;org.eclipse.jst.jee.server:jfinal-weixin-nancarp&quot;/&gt;
-</code></pre><h4 id="运行项目"><a href="#运行项目" class="headerlink" title="运行项目"></a>运行项目</h4><p>启动 tomcat，在浏览器输入 <a href="http://localhost/hello" target="_blank" rel="external">localhost/hello</a>，回车。<br>看到熟悉的 “Hello World” 就说明框架搭建成功。</p>
-<hr>
-<p><a href="http://git.oschina.net/NanCarp/jfinal-weixin-nancarp" target="_blank" rel="external">源码地址</a><br><a href="http://www.jianshu.com/p/191abc4da94d" target="_blank" rel="external">JFinal Weixin 学习笔记（4）– 实现微信信息交互</a><br><a href="http://www.jianshu.com/p/0ea20e77cf29" target="_blank" rel="external">JFinal Weixin 学习笔记（1）– 目录</a></p>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://git.oschina.net/jfinal/jfinal-weixin/wikis/JFinal-weixin-1.6-Jar%E4%BE%9D%E8%B5%96" target="_blank" rel="external">JFinal-weixin Jar包依赖</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2086,7 +2049,7 @@ host=http://*****.com
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
