@@ -1,0 +1,826 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Node.js MongoDB AngularJS Web 学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="6.1 同步和异步文件调用重要区别：    异步调用需要一个回调函数作为额外的参数。回调函数在系统的请求完成时被执行，并且通常包含一个错误作为其第一个参数。 异步调用自动处理异常；且如果发生异常，就把错误对象作为第一个参数传递。同步调用中处理异常，必须使用 try/catch 快。 同步调用立即运行，除非完成，否则不会返回到当前线程。异步调用被放置在事件队列中，并且执行返回到正在运行的线程的代码，">
+<meta name="keywords" content="Node.js MongoDB AngularJS Web 学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 Node.js 访问文件系统">
+<meta property="og:url" content="http://yoursite.com/2017/07/05/从 Node.js 访问文件系统/index.html">
+<meta property="og:site_name" content="李子园">
+<meta property="og:description" content="6.1 同步和异步文件调用重要区别：    异步调用需要一个回调函数作为额外的参数。回调函数在系统的请求完成时被执行，并且通常包含一个错误作为其第一个参数。 异步调用自动处理异常；且如果发生异常，就把错误对象作为第一个参数传递。同步调用中处理异常，必须使用 try/catch 快。 同步调用立即运行，除非完成，否则不会返回到当前线程。异步调用被放置在事件队列中，并且执行返回到正在运行的线程的代码，">
+<meta property="og:updated_time" content="2017-07-08T07:40:21.100Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从 Node.js 访问文件系统">
+<meta name="twitter:description" content="6.1 同步和异步文件调用重要区别：    异步调用需要一个回调函数作为额外的参数。回调函数在系统的请求完成时被执行，并且通常包含一个错误作为其第一个参数。 异步调用自动处理异常；且如果发生异常，就把错误对象作为第一个参数传递。同步调用中处理异常，必须使用 try/catch 快。 同步调用立即运行，除非完成，否则不会返回到当前线程。异步调用被放置在事件队列中，并且执行返回到正在运行的线程的代码，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/05/从 Node.js 访问文件系统/"/>
+
+
+
+
+
+  <title>从 Node.js 访问文件系统 | 李子园</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李子园</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录学习、生活、感悟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/05/从 Node.js 访问文件系统/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="NanCarp">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李子园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从 Node.js 访问文件系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-05T22:56:40+08:00">
+                2017-07-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="6-1-同步和异步文件调用"><a href="#6-1-同步和异步文件调用" class="headerlink" title="6.1 同步和异步文件调用"></a>6.1 同步和异步文件调用</h2><p>重要区别：  </p>
+<ul>
+<li>异步调用需要一个回调函数作为额外的参数。回调函数在系统的请求完成时被执行，并且通常包含一个错误作为其第一个参数。</li>
+<li>异步调用自动处理异常；且如果发生异常，就把错误对象作为第一个参数传递。同步调用中处理异常，必须使用 try/catch 快。</li>
+<li>同步调用立即运行，除非完成，否则不会返回到当前线程。异步调用被放置在事件队列中，并且执行返回到正在运行的线程的<br>代码，但是实际的调用知道它被事件循环提取出时才会执行。</li>
+</ul>
+<h2 id="6-2-打开和关闭文件"><a href="#6-2-打开和关闭文件" class="headerlink" title="6.2 打开和关闭文件"></a>6.2 打开和关闭文件</h2><p>一旦文件被打开，就可以从中读取数据或写入数据，这取决于用来打开文件的标志。要在 Node.js 应用程序中大打开文件，可以<br>使用下面的异步或同步语句之一：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.open(path, flags, [mode], callback)</div><div class="line">fs.openSync(path, flags, [mode])</div></pre></td></tr></table></figure></p>
+<ul>
+<li>path：指定文件系统的标准路径字符串。</li>
+<li>flags：打开文件的模式，读、写、追加等。</li>
+<li>mode：文件访问模式，默认为 0666，表示刻度且可写。</li>
+</ul>
+<p>定义文件如何打开的标志：  </p>
+<ul>
+<li>r：打开文件用于读取。如果该文件不存在，则会出现异常</li>
+<li>r+：打开文件用于读写。如果该文件不存在，则会出现异常</li>
+<li>rs：在同步模式下打开文件用于读取。这与强制使用 fs.openSync() 不一样。当使用这种模式时，操作系统将绕过本地文件系统<br>缓存。因为它可以跳过可能是小的本地缓存，所以这对 NFS 挂在是有用的。你用该只在必要时使用该标志，因为它可能对性能产生<br>负面影响</li>
+<li>rs+：同 rs，除了打开文件用于读写外</li>
+<li>w：打开文件用于写操作，如果它不存在，就创建该文件；或者如果它确实存在，则截断该文件</li>
+<li>wx：同 w；但如果路径存在，则打开失败</li>
+<li>w+：打开文件用于读写。如果它不存在，就创建该文件；或者如果它确实存在，则截断该文件</li>
+<li>wx+：同 w+；但如果路径存在，则打开失败</li>
+<li>a：打开文件用于追加。如果它不存在，则创建该文件</li>
+<li>ax：同 a；但如果路径存在，则打开失败</li>
+<li>a+：打开文件用于读取和追加。如果它不存在，则创建该文件</li>
+<li>ax+：同 a+；但如果路径存在，则打开失败</li>
+</ul>
+<p>一旦文件被打开，你需要关闭它以迫使操作系统把更改刷新到磁盘并释放操作系统锁。要关闭文件，可使用下列方法，并传递文件<br>操作符。异步 close() 方法调用，还需要指定回调函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.close(fd, callback)</div><div class="line">fs.closeSync(fd)</div></pre></td></tr></table></figure></p>
+<p>以下是以异步模式打开和关闭文件的例子。注意：回调函数被指定，且接收 err 和 fd 参数。fd 是用来读取或写入该文件的文件<br>描述符：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">fs.open(&quot;myFile&quot;, &apos;w&apos;, function(err, fd) &#123;</div><div class="line">	if (!err) &#123;</div><div class="line">		fs.close(fd);</div><div class="line">	&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>以下是同步模式，无回调函数，文件描述符直接从 fs.openSync() 返回：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var fd = fs.openSync(&quot;myFile&quot;, &apos;w&apos;);</div><div class="line">fs.closeSync(fd);</div></pre></td></tr></table></figure></p>
+<h2 id="6-3-写入文件"><a href="#6-3-写入文件" class="headerlink" title="6.3 写入文件"></a>6.3 写入文件</h2><h3 id="6-3-1-简单文件写入"><a href="#6-3-1-简单文件写入" class="headerlink" title="6.3.1 简单文件写入"></a>6.3.1 简单文件写入</h3><p>这些方法把一个字符串或缓冲区的全部内容写入一个文件，语法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.writeFile(path, data, [options], callback)</div><div class="line">fs.writeFileSync(path, data, [options])</div></pre></td></tr></table></figure></p>
+<ul>
+<li>path：文件路径，相对或绝对路径。</li>
+<li>data：将被写入到文件中的 String 或 Buffer 对象。</li>
+<li>options：一个对象，可以包含定义字符串编码，以及代开文件时使用得模式和标志的 encoding、mode 和 flag 属性。</li>
+<li>callback：当文件写入已经完成时被调用。</li>
+</ul>
+<p>以下实现异步请求来在文件中存储 config（配置）对象的 JSON 字符串：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 将 JSON 字符串写入文件</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var config = &#123;</div><div class="line">	maxFile: 20,</div><div class="line">	maxConnections: 15,</div><div class="line">	rootPath: &quot;/webroot&quot;</div><div class="line">&#125;;</div><div class="line">var configTxt = JSON.stringify(config);</div><div class="line">var options = &#123;encoding:&apos;utf8&apos;, flag:&apos;w&apos;&#125;;</div><div class="line">fs.writeFile(&apos;config.txt&apos;, configTxt, options, function(err) &#123;</div><div class="line">	if (err) &#123;</div><div class="line">		console.log(&quot;Config Write Failed.&quot;);</div><div class="line">	&#125; else &#123;</div><div class="line">		console.log(&quot;Config Saved.&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><code>Config Saved.</code></p>
+<h3 id="6-3-2-同步文件写入"><a href="#6-3-2-同步文件写入" class="headerlink" title="6.3.2 同步文件写入"></a>6.3.2 同步文件写入</h3><p>同步方法涉及在返回执行正在运行的线程之前，将数据写入文件。这提供了使你能够在相同的代码段写入多次的优点，但如果该<br>文件写入控制住其他线程，它就可能是一个缺点。<br>同步写入文件，先用 openSync() 打开它来获取文件描述符，然后使用 fs.writeSync() 将数据写入文件。语法：<br><code>fs.writeSync(fd, data, offset, length, position)</code></p>
+<ul>
+<li>fd：openSync() 返回的文件描述符</li>
+<li>data：指定将被写入文件中的 String 或 Buffer 对象</li>
+<li>offset：指定 data 参数中开始阅读的索引。如果想从字符串或缓冲区的当前索引开始，值应该为 null。</li>
+<li>length：指定要写入的字节数，可以指定 null，表示一直写到数据缓冲区的末尾</li>
+<li>position：指定在文件中写入的位置，null 表示使用文件当前位置</li>
+</ul>
+<p>以下实现基本同步写入把一系列字符串存储到文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// 执行同步写入文件</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var veggieTray = [&apos;carrots&apos;, &apos;celery&apos;, &apos;olives&apos;];</div><div class="line">fd = fs.openSync(&apos;veggie.txt&apos;, &apos;w&apos;);</div><div class="line">while (veggieTray.length) &#123;</div><div class="line">	veggie = veggieTray.pop() + &quot; &quot;;</div><div class="line">	var bytes = fs.writeSync(fd, veggie, null, null);</div><div class="line">	console.log(&quot;Wrote %s %dbytes&quot;, veggie, bytes);</div><div class="line">&#125;</div><div class="line">fs.closeSync(fd);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ node file_write_sync.js</div><div class="line">Wrote olives  7bytes</div><div class="line">Wrote celery  7bytes</div><div class="line">Wrote carrots  8bytes</div></pre></td></tr></table></figure></p>
+<h3 id="异步写入文件"><a href="#异步写入文件" class="headerlink" title="异步写入文件"></a>异步写入文件</h3><p>文件写入的异步方法在事件队列中放置一个写入请求，然后将控制返回给调用代码。除非事件循环提取出写入请求，并且执行它，<br>否则实际的写操作不会发生。在同一个文件上执行多个异步写入请求时，除非在执行下一个写入前等待第一个写入回调函数完成，<br>否则不能保证执行的顺序。通常情况下，最简单的是把写操作嵌套在上一个写操作的回调函数中。<br>要异步写入一个文件，首先使用 open() 打开它，然后在打开请求的回调函数已经执行后，使用 fs.write() 将数据写入文件。<br>以下是 fs.write() 语法：<br><code>fs.write(fd, data, offset, length, position, callback)</code>  </p>
+<ul>
+<li>fd：openSync() 返回的文件描述符。</li>
+<li>data：指定将被写入文件中的 String 或 Buffer 对象。</li>
+<li>offset：指定要开始读取数据的输入数据中的索引。如果想从字符串或缓冲区的当前索引开始，值应该为 null。</li>
+<li>length：指定要写入的字节数，可以指定 null，表示一直写到数据缓冲区的末尾。</li>
+<li>position：指定在文件中写入的位置，null 表示使用文件当前位置。</li>
+<li>callback：必须是可以接受 error 和 bytes 两个参数的函数，其中 error 是在写过程中发生的错误，bytes 指定写入<br>字节数。</li>
+</ul>
+<p>以下代码显示了如何实现基本的异步写入来把一系列字符串数据存储到一个文件。注意，open() 的 callback 所指定的回调函数<br>调用 writeFruit() 函数，并传递文件描述符，write() 方法的回调也调用 writeFruit() ，并传递文件描述符。这确保了异步<br>写入在另一个执行前完成。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">// 执行异步写入文件</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var fruitBowl = [&apos;apple&apos;, &apos;orange&apos;, &apos;banana&apos;, &apos;grapes&apos;];</div><div class="line">function writeFruit(fd) &#123;</div><div class="line">	if (fruitBowl.length) &#123;</div><div class="line">		var fruit = fruitBowl.pop() + &quot; &quot;;</div><div class="line">		fs.write(fd, fruit, null, null, function(err, bytes) &#123;</div><div class="line">			if (err) &#123;</div><div class="line">				console.log(&quot;File Write Failed.&quot;);</div><div class="line">			&#125; else &#123;</div><div class="line">				console.log(&quot;Wrote: %s %dbytes&quot;, fruit, bytes);</div><div class="line">				writeFruit(fd);</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">		&#125;);</div><div class="line">	&#125; else &#123;</div><div class="line">		fs.close(fd);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">fs.open(&apos;fruit.txt&apos;, &apos;w&apos;, function(err, fd) &#123;</div><div class="line">	writeFruit(fd);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node file_write_async.js</div><div class="line">Wrote: grapes  7bytes</div><div class="line">Wrote: banana  7bytes</div><div class="line">Wrote: orange  7bytes</div><div class="line">Wrote: apple  6bytes</div></pre></td></tr></table></figure></p>
+<h3 id="6-3-4-流式文件写入"><a href="#6-3-4-流式文件写入" class="headerlink" title="6.3.4 流式文件写入"></a>6.3.4 流式文件写入</h3><p>往一个文件写入大量数据时，最好的方法之一是使用流，其中包括把文件作为一个 Writable 流打开。<br>要将数据异步传送到文件，首先用以下语法创建一个 Writable 对象：<br><code>fs.createWritableStream(path, [options])</code>  </p>
+<ul>
+<li>path：指定文件路径</li>
+<li>options：可选，是一个对象，可以包含定义字符串编码，以及打开文件时使用得模式和标志的 encoding、mode 和 flag<br>属性。<br>一旦打开了 Writable 文件流，就可以使用标准的流式 write(buffer) 方法来写入它。当写入完成后，再调用 end() 方法<br>来关闭流。<br>以下代码实现了基本的 Writable 文件流。注意，代码完成写入后，执行 end() 方法，触发 close 事件。  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// 实现一个 Writable 流，允许流式写入一个文件</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var grains = [&apos;wheat&apos;, &apos;rice&apos;, &apos;oats&apos;];</div><div class="line">var options = &#123;encoding: &apos;utf8&apos;, flag: &apos;w&apos;&#125;;</div><div class="line">var fileWriteStream = fs.createWriteStream(&quot;grains.txt&quot;, options);</div><div class="line">fileWriteStream.on(&quot;close&quot;, function() &#123;</div><div class="line">	console.log(&quot;File Closed.&quot;);</div><div class="line">&#125;);</div><div class="line">while (grains.length) &#123;</div><div class="line">	var data = grains.pop() + &quot; &quot;;</div><div class="line">	fileWriteStream.write(data);</div><div class="line">	console.log(&quot;Wrote: %s&quot;, data);</div><div class="line">&#125;</div><div class="line">fileWriteStream.end();</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node file_write_stream.js</div><div class="line">Wrote: oats</div><div class="line">Wrote: rice</div><div class="line">Wrote: wheat</div><div class="line">File Closed.</div></pre></td></tr></table></figure></p>
+<h3 id="6-4-1-简单文件读取"><a href="#6-4-1-简单文件读取" class="headerlink" title="6.4.1 简单文件读取"></a>6.4.1 简单文件读取</h3><p>readFile(） 方法从文件中把全部内容读取到数据缓冲区，语法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.readFile(path, [options], callback)</div><div class="line">fs.readFileSync(path, [options])</div></pre></td></tr></table></figure></p>
+<ul>
+<li>path：文件路径，相对或绝对路径</li>
+<li>options：可选，是一个对象，可以包含定义字符串编码，以及打开文件时使用得模式和标志的 encoding、mode 和 flag<br>属性。</li>
+<li>callback：异步方法需要，文件读取完成时将被调用。</li>
+</ul>
+<p>以下代码实现了简单的异步 readFile() 请求来从一个配置文件中读取 JSON 字符串，然后用它来创建一个 config 对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// 读取 JSON 字符串文件到一个对象</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var options = &#123;encoding:&apos;utf8&apos;, flag:&apos;r&apos;&#125;;</div><div class="line">fs.readFile(&apos;config.txt&apos;, options, function(err, data) &#123;</div><div class="line">	if (err) &#123;</div><div class="line">		console.log(&quot;Failed to open Config File.&quot;);</div><div class="line">	&#125; else &#123;</div><div class="line">		console.log(&quot;Config Loaded.&quot;);</div><div class="line">		var config = JSON.parse(data);</div><div class="line">		console.log(&quot;Max Files: &quot; + config.maxFilse);</div><div class="line">		console.log(&quot;Max Connecttions: &quot; + config.maxConnections);</div><div class="line">		console.log(&quot;Root Path: &quot; + config.rootPath);</div><div class="line">	&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ node file_read.js</div><div class="line">Config Loaded.</div><div class="line">Max Files: undefined</div><div class="line">Max Connecttions: 15</div><div class="line">Root Path: /webroot</div></pre></td></tr></table></figure></p>
+<h3 id="6-4-2-同步文件读取"><a href="#6-4-2-同步文件读取" class="headerlink" title="6.4.2 同步文件读取"></a>6.4.2 同步文件读取</h3><p>文件读取的同步方法涉及在返回执行正在运行的线程之前，读取文件中的数据。这提供了使你能够在代码相同的部分多次读取<br>的优点，但如果该文件读取操作控制住其他线程，它就可能是一个缺点。<br>要同步读取一个文件，先用 openSync() 打开它来获取一个文件描述符，然后使用 readSync() 从文件中读取数据。语法：<br><code>fs.readSync(fd, buffer, offset, length, position)</code>  </p>
+<ul>
+<li>fd：openSync() 返回的文件描述符。</li>
+<li>buffer：指定将被从文件中读入的 Buffer 对象。</li>
+<li>offset：指定缓冲区将开始写入数据的索引；置为 null，表示从缓冲区的当前索引处开始。</li>
+<li>position：指定文件中开始读取的位置；置为 null，表示使用文件的当前位置。</li>
+</ul>
+<p>以下代码实现从一个文件中读取字符串数据开的基本同步读取：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// 执行从文件同步读取</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">fd = fs.openSync(&apos;veggie.txt&apos;, &apos;r&apos;);</div><div class="line">var veggies = &quot;&quot;;</div><div class="line">do &#123;</div><div class="line">	var buf = new Buffer(5);</div><div class="line">	buf.fill();</div><div class="line">	var bytes = fs.readSync(fd, buf, null, 5);</div><div class="line">	console.log(&quot;read %dbytes&quot;, bytes);</div><div class="line">	veggies += buf.toString();</div><div class="line">&#125; while (bytes &gt; 0);</div><div class="line">fs.closeSync(fd);</div><div class="line">console.log(&quot;Veggies: &quot; + veggies);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ node file_read_sync.js</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 2bytes</div><div class="line">read 0bytes</div><div class="line">Veggies: olives celery carrots</div></pre></td></tr></table></figure></p>
+<h3 id="6-4-3-异步文件读取"><a href="#6-4-3-异步文件读取" class="headerlink" title="6.4.3 异步文件读取"></a>6.4.3 异步文件读取</h3><p>文件读取的异步方法在事件队列中放置一个读取请求，然后将控制返回给调用代码。除非事件循环提取出读取请求，并且执行它，<br>否则实际的读操作不会发生。在同一个文件上执行多个异步读取请求时，除非在执行下一个读取前等待第一个读取回调函数完成，<br>否则不能保证执行的顺序。通常情况下，最简单的是把写操作嵌套在上一个读取操作的回调函数中。<br>要从异步文件中读取，首先使用 open() 打开它，然后在来自打开请求的回调函数已经执行后，使用 read() 读取文件数据。<br>以下是 read() 语法：<br><code>fs.read(fd, buffer, offset, length, position, callback)</code></p>
+<ul>
+<li>fd：openSync() 返回的文件描述符。</li>
+<li>buffer：指定将被从文件中读入的 Buffer 对象。</li>
+<li>offset：指定缓冲区将开始写入数据的索引；置为 null，表示从缓冲区的当前索引处开始。</li>
+<li>position：指定文件中开始读取的位置；置为 null，表示使用文件的当前位置。</li>
+<li>callback：必须是可以接受 error、bytes 和 buffer 这三个参数的函数。<ul>
+<li>error：读取过程发生的错误</li>
+<li>bytes：读取的字节数</li>
+<li>buffer：从读请求填充数据的缓冲区</li>
+</ul>
+</li>
+</ul>
+<p>以下代码从一个文件中异步读取数据块。注意，open() 的回调函数调用 readFruit() 函数，并传递文件描述符。 read() 的<br>回调函数也调用 readFruit()，并传递文件描述符，这保证了异步读取在另一个读取之前完成。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// 执行从文件异步读取</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">function readFruit(fd, fruits) &#123;</div><div class="line">	var buf = new Buffer(5);</div><div class="line">	buf.fill();</div><div class="line">	fs.read(fd, buf, 0, 5, null, function(err, bytes, data) &#123;</div><div class="line">		if (bytes &gt; 0) &#123;</div><div class="line">			console.log(&quot;read %dbytes&quot;, bytes);</div><div class="line">			fruits += data;</div><div class="line">			readFruit(fd, fruits);</div><div class="line">		&#125; else &#123;</div><div class="line">			fs.close(fd);</div><div class="line">			console.log(&quot;Fruits: %s&quot;, fruits);</div><div class="line">		&#125;</div><div class="line">	&#125;);</div><div class="line">&#125;</div><div class="line">fs.open(&apos;fruit.txt&apos;, &apos;r&apos;, function(err, fd) &#123;</div><div class="line">	readFruit(fd, &quot;&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ node file_read_async.js</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 5bytes</div><div class="line">read 2bytes</div><div class="line">Fruits: grapes banana orange apple</div></pre></td></tr></table></figure></p>
+<h3 id="6-4-4-流式文件读取"><a href="#6-4-4-流式文件读取" class="headerlink" title="6.4.4 流式文件读取"></a>6.4.4 流式文件读取</h3><p>要异步从文件传输数据，首先创建一个 Readable 流对象：<br><code>fs.createReadStream(path, [options])</code>  </p>
+<ul>
+<li>path：指定文件路径，相对或绝对路径。</li>
+<li>options：可选，是一个对象，可以包含定义字符串编码，以及打开文件时使用得模式和标志的 encoding、mode 和 flag<br>属性。</li>
+</ul>
+<p>当打开 Readable 文件流后，可以用过使用 readable 事件和 read() 请求，或通过实现 data 事件处理程序轻松地从它<br>读出。<br>以下代码实现了一个基本的 Readable 文件流。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// 实现 Readable 流，使得能够流式读取一个文件</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var options = &#123;encoding: &apos;utf8&apos;, flag: &apos;r&apos;&#125;;</div><div class="line">var fileReadStream = fs.createReadStream(&quot;grains.txt&quot;, options);</div><div class="line">// data 事件处理程序不断地从流中读取数据</div><div class="line">fileReadStream.on(&apos;data&apos;, function(chunk) &#123;</div><div class="line">	console.log(&apos;Grains: %s&apos;, chunk);</div><div class="line">	console.log(&apos;Read %d bytes of data.&apos;, chunk.length);</div><div class="line">&#125;);</div><div class="line">fileReadStream.on(&quot;close&quot;, function() &#123;</div><div class="line">	console.log(&quot;File Closed.&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ node file_read_stream.js</div><div class="line">Grains: oats rice wheat</div><div class="line">Read 16 bytes of data.</div><div class="line">File Closed.</div></pre></td></tr></table></figure></p>
+<h2 id="6-5-其他文件系统任务"><a href="#6-5-其他文件系统任务" class="headerlink" title="6.5 其他文件系统任务"></a>6.5 其他文件系统任务</h2><h3 id="6-5-1-验证路径的存在性"><a href="#6-5-1-验证路径的存在性" class="headerlink" title="6.5.1 验证路径的存在性"></a>6.5.1 验证路径的存在性</h3><p>在对文件或目录执行任何形式的读/写操作之前，都要验证路径是否存在。可以使用以下方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.exists(path, callback)</div><div class="line">fs.existsSync(path)</div></pre></td></tr></table></figure></p>
+<p>fs.existsSync(path) 返回 true 或 false ，这取决于路径是否存在。fs.exists() 的回调函数将被传入 true 或 false，<br>例如，下面的代码验证在当前路径中以 filesystem.js 命名的文件是否存在，并显示验证的结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">fs.exists(&apos;filesystem.js&apos;, function (exists) &#123;</div><div class="line">	console.log(exits ? &quot;Path Exists&quot; : &quot;Path Does Not Exist&quot;);</div><div class="line">&#125;):</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-2-获取文件信息"><a href="#6-5-2-获取文件信息" class="headerlink" title="6.5.2 获取文件信息"></a>6.5.2 获取文件信息</h3><p>获取文件系统对象的基本信息，如文件大小、模式、修改时间，以及条目是否是一个文件或文件夹等。使用下面的调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.stats(path, callback)</div><div class="line">fs.statsSync(path)</div></pre></td></tr></table></figure></p>
+<p>fsStatsSync() 方法返回一个 Stats 对象。执行 fs.stats() 方法，Stats 对象作为第二个参数被传递到回调函数。第一个<br>参数是 error。<br>附加到 Stats 对象上的最常用的属性和方法：  </p>
+<ul>
+<li>isFile()：如果该条目是一个文件，则返回 true</li>
+<li>isDirectory()：如果该条目是一个目录，则返回 true</li>
+<li>isSocket()：如果该条目是一个套接字，则返回 true</li>
+<li>dev：指定文件所在的设备 ID</li>
+<li>mode：指定文件的访问模式</li>
+<li>size：指定文件的字节数</li>
+<li>blksize：指定用于存储文件的快的大小，以字节为单位</li>
+<li>blocks：指定文件在磁盘上占用的块的数目</li>
+<li>atime：指定上次访问文件的时间</li>
+<li>mtime：指定文件的最后修改时间</li>
+<li>ctime：指定文件的创建时间</li>
+</ul>
+<p>下面代码先执行 fs.stats() 调用，然后作为 JSON 字符串输出对象的结果，并使用 isFile()、isDirector() 和 isSocket()<br>调用，说明了如何使用 fs.stas() 调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 实现一个 fs.stats() 调用来检索有关文件的信息</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">fs.stat(&apos;file_stats.js&apos;, function (err, stats) &#123;</div><div class="line">	if (!err) &#123;</div><div class="line">		console.log(&apos;stats: &apos; + JSON.stringify(stats, null, &apos; &apos;));</div><div class="line">		console.log(stats.isFile() ? &quot;Is a File&quot; : &quot;Is not a File&quot;);</div><div class="line">		console.log(stats.isDirectory() ? &quot;Is a Folder&quot; : &quot;Is not a Folder&quot;);</div><div class="line">		console.log(stats.isSocket() ? &quot;Is a Socket&quot; : &quot;Is not a Socket&quot;);</div><div class="line">		stats.isDirectory();</div><div class="line">		stats.isBlockDevice();</div><div class="line">		stats.isCharacterDevice();</div><div class="line">		//stats.isSymbolicLink(); //only lstat</div><div class="line">		stats.isFIFO();</div><div class="line">		stats.isSocket();</div><div class="line">	&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ node file_stats.js</div><div class="line">stats: &#123;</div><div class="line"> &quot;dev&quot;: -996849395,</div><div class="line"> &quot;mode&quot;: 33206,</div><div class="line"> &quot;nlink&quot;: 1,</div><div class="line"> &quot;uid&quot;: 0,</div><div class="line"> &quot;gid&quot;: 0,</div><div class="line"> &quot;rdev&quot;: 0,</div><div class="line"> &quot;ino&quot;: 147211412819692740,</div><div class="line"> &quot;size&quot;: 577,</div><div class="line"> &quot;atime&quot;: &quot;2017-07-07T13:57:45.893Z&quot;,</div><div class="line"> &quot;mtime&quot;: &quot;2017-07-07T14:04:33.741Z&quot;,</div><div class="line"> &quot;ctime&quot;: &quot;2017-07-07T14:04:33.741Z&quot;,</div><div class="line"> &quot;birthtime&quot;: &quot;2017-07-07T13:57:45.892Z&quot;</div><div class="line">&#125;</div><div class="line">Is a File</div><div class="line">Is not a Folder</div><div class="line">Is not a Socket</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-3-列出文件"><a href="#6-5-3-列出文件" class="headerlink" title="6.5.3 列出文件"></a>6.5.3 列出文件</h3><p>常见任务：列出在目录中的文件和文件夹——例如列出一个目录中的文件，以确定是否需要进行清理；在目录结构上动态操作等。<br>可以使用以下名利读取条目列表来访问文件系统中的文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.readdir(path, callback)</div><div class="line">fs.readdirSync(path)</div></pre></td></tr></table></figure></p>
+<p>readdirSync() 返回指定路径中条目名称的字符串数组。 readdir() ，该列表作为第二个参数被传递给回调函数，如果有错误，<br>此错误作为第一个参数传递。<br>下面实现了一个嵌套的回调链来遍历目录结构并输出其中的条目。注意，回调函数实现了一个包装器，它提供一个 fullPath 变量<br>的闭包，并且通过一部回调函数使 WalkDirs() 函数循环：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">// 实现一个回调链来遍历和输出目录结构的内容</div><div class="line">var fs = require(&apos;fs&apos;);</div><div class="line">var Path = require(&apos;path&apos;);</div><div class="line">function WalkDirs(dirPath) &#123;</div><div class="line">	console.log(dirPath);</div><div class="line">	fs.readdir(dirPath, function(err, entries) &#123;</div><div class="line">		for (var idx in entries) &#123;</div><div class="line">			var fullPath = Path.join(dirPath, entries[idx]);</div><div class="line">			(function(fullPath) &#123;</div><div class="line">				fs.stat(fullPath, function(err, stats) &#123;</div><div class="line">					if (stats &amp;&amp; stats.isFile()) &#123;</div><div class="line">						console.log(fullPath);</div><div class="line">					&#125; else &#123;</div><div class="line">						WalkDirs(fullPath);</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">			&#125;)(fullPath);</div><div class="line">		&#125;</div><div class="line">	&#125;);</div><div class="line">&#125;</div><div class="line">WalkDirs(&quot;../ch6&quot;);</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">$ node file_readdir.js</div><div class="line">../ch6</div><div class="line">..\ch6\config.txt</div><div class="line">..\ch6\file_read.js</div><div class="line">..\ch6\file_readdir.js</div><div class="line">..\ch6\file_read_async.js</div><div class="line">..\ch6\file_read_stream.js</div><div class="line">..\ch6\file_read_sync.js</div><div class="line">..\ch6\file_stats.js</div><div class="line">..\ch6\file_write.js</div><div class="line">..\ch6\file_write_sync.js</div><div class="line">..\ch6\file_write_async.js</div><div class="line">..\ch6\file_write_stream.js</div><div class="line">..\ch6\README.md</div><div class="line">..\ch6\fruit.txt</div><div class="line">..\ch6\grains.txt</div><div class="line">..\ch6\other.js</div><div class="line">..\ch6\test</div><div class="line">..\ch6\veggie.txt</div><div class="line">..\ch6\test\test.js</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-4-删除文件"><a href="#6-5-4-删除文件" class="headerlink" title="6.5.4 删除文件"></a>6.5.4 删除文件</h3><p>命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.unlink(path, callback)</div><div class="line">fs.unlinkSync(path)</div></pre></td></tr></table></figure></p>
+<p>unlinkSync(path) 函数返回 true 或 false，这取决于是否删除成功。如果删除该文件时遇到错误，异步的 unlink() 调用<br>就传回一个错误值给回调函数。<br>下面代码使用 unlink() 异步 fs 调用删除 new.txt 文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">fs.unlink(&quot;new.txt&quot;, function(err) &#123;</div><div class="line">	console.log(err ? &quot;File Deleted Failed&quot; : &quot;File Deleted&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-5-截断文件"><a href="#6-5-5-截断文件" class="headerlink" title="6.5.5 截断文件"></a>6.5.5 截断文件</h3><p>截断（Truncate）文件是指通过把文件结束处设置为比当前值小的值来减小文件的大小。可能需要截断不断增长，但不包含<br>关键数据的文件（例如，临时日志）。可使用下面的 fs 调用之一来截断文件，传入希望文件截断完成时要包含的字节数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.truncate(path, len, callback)</div><div class="line">fs.truncateSync(path, len)</div></pre></td></tr></table></figure></p>
+<p>fs.truncateSync(path) 函数返回 true 或 false，这取决于是否截断成功。如果截断该文件时遇到错误，异步的 truncate()<br>调用就传回一个错误值给回调函数。<br>下面代码把 log.txt 的文件截断成零字节：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">fs.truncate(&quot;log.txt&quot;, function(err) &#123;</div><div class="line">	console.log(err ? &quot;File Truncate Failed&quot; : &quot;File Truncated&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-6-建立和删除目录"><a href="#6-5-6-建立和删除目录" class="headerlink" title="6.5.6 建立和删除目录"></a>6.5.6 建立和删除目录</h3><p>从 Node.js 添加目录，使用以下 fs 调用之一：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.mkdir(path, [mode], callback)</div><div class="line">fs.mkdirSync(path, [mode])</div></pre></td></tr></table></figure></p>
+<ul>
+<li>path：可以是绝对或相对路径</li>
+<li>mode：可选，指定新目录的访问模式</li>
+</ul>
+<p>mkdirSync(path)  返回 true 或 false，取决于目录是否已经成功创建。另一方面，如果遇到错误，异步的 mkdir() 调用<br>传递一个 error 值给回调函数。<br>使用异步方法的时候，需要等待创建目录的回调函数完成后，才能创建该目录的子目录。下面演示了如何将创建一个子目录<br>结构的操作链接在一起：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">fs.mkdir(&quot;./data&quot;, function(err) &#123;</div><div class="line">	fs.mkdir(&quot;./data/folderA&quot;, function(err) &#123;</div><div class="line">		fs.mkdir(&quot;./data/folderA/folderB&quot;, function(err) &#123;</div><div class="line">			fs.mkdir(&quot;./data/folderA/folderB/folderD&quot;, function(err) &#123;</div><div class="line">				</div><div class="line">			&#125;);</div><div class="line">		&#125;);</div><div class="line">		fs.mkdir(&quot;./data/folderA/folderC&quot;, function(err) &#123;</div><div class="line">			fs.mkdir(&quot;./data/folderA/folderC/folderE&quot;, function(err) &#123;</div><div class="line">				</div><div class="line">			&#125;);</div><div class="line">		&#125;);</div><div class="line">	&#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>要从 Node.js 删除目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.rmdir(path, callback)</div><div class="line">fs.rmdirSync(path)</div></pre></td></tr></table></figure></p>
+<p>rmdirSync(path)  返回 true 或 false，取决于目录是否已经成功删除。另一方面，如果遇到错误，异步的 rmdir() 调用<br>传递一个 error 值给回调函数。<br>使用异步方法的时候，再删除父目录之前，需要等待删除该目录的回调函数完成。下面演示了如何将删除子目录结构的操作<br>链接在一起：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">fs.rmdir(&quot;./data/folderA/folderB/folderC&quot;, function(err)&#123;</div><div class="line">	fs.rmdir(&quot;./data/folderA/folderB&quot;, function(err) &#123;</div><div class="line">		fs.rmdir(&quot;./data/folderD&quot;, function(err) &#123;</div><div class="line">			</div><div class="line">		&#125;);</div><div class="line">	&#125;);</div><div class="line">	fs.rmdir(&quot;./data/folderA/folderC&quot;, function(err) &#123;</div><div class="line">		fs.rmdir(&quot;./data/folderE&quot;, function(err) &#123;</div><div class="line">			</div><div class="line">		&#125;);</div><div class="line">	&#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-7-重命名文件和目录"><a href="#6-5-7-重命名文件和目录" class="headerlink" title="6.5.7 重命名文件和目录"></a>6.5.7 重命名文件和目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs.rename(oldPath, newPath, callback)</div><div class="line">fs.renameSync(oldPath, new Path)</div></pre></td></tr></table></figure>
+<p>oldPath 指定现有的文件或目录的路径，而 newPath 指定新名称。renameSync(path) 返回 true 或 false，取决于文件或<br>目录是否已经成功更名。遇到错误，异步 remane() 调用传递 error 给回调函数。<br>下面代码，把一个名为 old.txt 的文件重命名为 new.txt，并把一个名为 testDir 的目录重命名为 renamedDir：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">fs.rename(&quot;old.txt&quot;, &quot;new.txt&quot;, function(err) &#123;</div><div class="line">	console.log(err ? &quot;Rename Failed&quot; : &quot;File Renamed&quot;);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">fs.rename(&quot;testDir&quot;, &quot;renameDir&quot;, function(err) &#123;</div><div class="line">	console.log(err ? &quot;Rename Failed&quot; : &quot;Folder Renamed&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="6-5-8-监视文件更改"><a href="#6-5-8-监视文件更改" class="headerlink" title="6.5.8 监视文件更改"></a>6.5.8 监视文件更改</h3><p>监视文件，在文件发生变化时执行回调函数。如果希望当文件被修改时触发事件的发生，但不希望从应用程序中直接不断地<br>轮询，这会很有用。但是监视在底层操作系统中产生了一些开销，适可而止地使用。<br>监视文件，课使用下面的命令传递想要见识的文件的 path（路径）：<br><code>fs.wathcFile(Path, [optins], callback)</code><br>可以传入 options 对象，它包含 persistent（持续）和 interval 属性。如果想持续监视，设置 persistent 属性为 true。<br>interval 属性指定所需的文件更改的轮询时间，以毫秒为单位。<br>当文件发生变化时，callback 函数就会执行，并传递 Stats 对象。<br>下面代码每个 5 秒监视 log.txt 文件，并使用 Stats 对象来输出本次和上次文件被修改的时间：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">fs.watchFile(&quot;log.txt&quot;, &#123;persistent:true, interval:5000&#125;, function (curr, prev) &#123;</div><div class="line">	console.log(&quot;log.txt modified at: &quot; + curr.mtime);</div><div class="line">	console.log(&quot;Previous modification was: &quot; + prev.mtime);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Node-js-MongoDB-AngularJS-Web-学习/" rel="tag"># Node.js MongoDB AngularJS Web 学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/03/在 Node.js 中处理数据 IO/" rel="next" title="在 Node.js 中处理数据 I/O">
+                <i class="fa fa-chevron-left"></i> 在 Node.js 中处理数据 I/O
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="NanCarp" />
+          <p class="site-author-name" itemprop="name">NanCarp</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-同步和异步文件调用"><span class="nav-number">1.</span> <span class="nav-text">6.1 同步和异步文件调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-打开和关闭文件"><span class="nav-number">2.</span> <span class="nav-text">6.2 打开和关闭文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-写入文件"><span class="nav-number">3.</span> <span class="nav-text">6.3 写入文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-1-简单文件写入"><span class="nav-number">3.1.</span> <span class="nav-text">6.3.1 简单文件写入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-2-同步文件写入"><span class="nav-number">3.2.</span> <span class="nav-text">6.3.2 同步文件写入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步写入文件"><span class="nav-number">3.3.</span> <span class="nav-text">异步写入文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-4-流式文件写入"><span class="nav-number">3.4.</span> <span class="nav-text">6.3.4 流式文件写入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-1-简单文件读取"><span class="nav-number">3.5.</span> <span class="nav-text">6.4.1 简单文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-2-同步文件读取"><span class="nav-number">3.6.</span> <span class="nav-text">6.4.2 同步文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-3-异步文件读取"><span class="nav-number">3.7.</span> <span class="nav-text">6.4.3 异步文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-4-流式文件读取"><span class="nav-number">3.8.</span> <span class="nav-text">6.4.4 流式文件读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-5-其他文件系统任务"><span class="nav-number">4.</span> <span class="nav-text">6.5 其他文件系统任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-1-验证路径的存在性"><span class="nav-number">4.1.</span> <span class="nav-text">6.5.1 验证路径的存在性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-2-获取文件信息"><span class="nav-number">4.2.</span> <span class="nav-text">6.5.2 获取文件信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-3-列出文件"><span class="nav-number">4.3.</span> <span class="nav-text">6.5.3 列出文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-4-删除文件"><span class="nav-number">4.4.</span> <span class="nav-text">6.5.4 删除文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-5-截断文件"><span class="nav-number">4.5.</span> <span class="nav-text">6.5.5 截断文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-6-建立和删除目录"><span class="nav-number">4.6.</span> <span class="nav-text">6.5.6 建立和删除目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-7-重命名文件和目录"><span class="nav-number">4.7.</span> <span class="nav-text">6.5.7 重命名文件和目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-8-监视文件更改"><span class="nav-number">4.8.</span> <span class="nav-text">6.5.8 监视文件更改</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NanCarp</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
